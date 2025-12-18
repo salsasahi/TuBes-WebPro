@@ -1,0 +1,27 @@
+.upload-box {
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
+}
+
+.upload-box:hover {
+  background-color: #eef4ff;
+  border-color: #3b82f6;
+}
+
+.breadcrumb a {
+  text-decoration: none;
+  color: #3b82f6;
+}
+
+.breadcrumb-item.active {
+  color: #6b7280;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}

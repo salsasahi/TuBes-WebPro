@@ -23,15 +23,39 @@
       </div>
 
       <div class="admin-info text-white-50 small">
-        <div class="d-flex align-items-center">
-          <img src="https://via.placeholder.com/35" class="rounded-circle me-2" alt="Admin">
-          <div>
-            <p class="mb-0 text-white fw-semibold">Admin User</p>
-            <small>admin@eventku.com</small>
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <img src="admin_profil.jpeg" class="rounded-circle me-2" alt="Admin" style="width: 35px; height: 35px; object-fit: cover;">
+            <div>
+              <p class="mb-0 text-white fw-semibold">Admin User</p>
+              <small>admin@eventku.com</small>
+            </div>
           </div>
+          <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#logoutModal" title="Logout">
+            <i class="bi bi-box-arrow-right"></i>
+          </button>
         </div>
       </div>
     </aside>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right me-2"></i>Konfirmasi Logout</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Apakah Anda yakin ingin keluar dari dashboard admin?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-danger" id="confirmLogout"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Main Content -->
     <main class="main-content flex-grow-1 p-4 bg-light">
@@ -91,6 +115,7 @@
             <h6 class="fw-semibold mb-0">Recent Events</h6>
             <div class="input-group w-auto">
               <input type="text" class="form-control form-control-sm" placeholder="Search events..." />
+
             </div>
           </div>
 
@@ -175,5 +200,17 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Logout functionality
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+      // Clear any login session data
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('currentUser');
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+    });
+  </script>
 </body>
 </html>

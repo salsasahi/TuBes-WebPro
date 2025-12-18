@@ -97,12 +97,12 @@
 
         <div class="price-section">
           <h3>Detail Harga</h3>
-          <div class="price-item" id="ticket-price-item">
+          <div class="price-item">
             <span>Tiket 1 (Pax)</span>
             <span>IDR 40.000</span>
           </div>
           <div class="price-item">
-            <span>Biaya Layanan</span>
+            <span>Pajak Aplikasi (5%)</span>
             <span>IDR 2.000</span>
           </div>
           <hr class="price-divider" />
@@ -146,20 +146,25 @@
           document.querySelector('.event-date').textContent = data.date;
           
           // Update harga tiket
-          const priceItemTicket = document.querySelector('#ticket-price-item');
+          const priceItemTicket = document.querySelector('.price-item:first-child');
           priceItemTicket.innerHTML = `
-            <span>Tiket ${data.quantity} (Pax)</span>
-            <span>IDR ${(data.pricePerTicket * data.quantity).toLocaleString('id-ID')}</span>
+          <span>Tiket ${data.quantity} Pax</span>
+          <span>IDR ${(data.pricePerTicket * data.quantity).toLocaleString('id-ID')}</span>
           `;
           
-          // Biaya layanan tetap 2.000
-          const serviceFee = 2000;
-          const totalWithFee = data.totalPrice + serviceFee;
+          // Hitung pajak (5%)
+          const tax = Math.round(data.totalPrice * 0.05);
+          const totalWithTax = data.totalPrice + tax;
           
-          // Update biaya layanan (sudah ada di HTML, tidak perlu diubah)
+          // Update pajak
+          const priceItemTax = document.querySelectorAll('.price-item')[1];
+          priceItemTax.innerHTML = `
+            <span>Pajak Aplikasi (5%)</span>
+            <span>IDR ${tax.toLocaleString('id-ID')}</span>
+          `;
           
           // Update total
-          document.querySelector('.total-amount').textContent = `IDR ${totalWithFee.toLocaleString('id-ID')}`;
+          document.querySelector('.total-amount').textContent = `IDR ${totalWithTax.toLocaleString('id-ID')}`;
         }
         
         // Event listener untuk tombol Pesan

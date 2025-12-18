@@ -6,10 +6,9 @@
   <title>Dashboard - EventKu</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-  <!-- NAVBAR -->
   <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
@@ -19,11 +18,10 @@
     <nav class="navbar-links">
       <a href="dashboard_new.html" class="active">Beranda</a>
       <a href="#events">Event</a>
-      <a href="#tentang">Tentang</a>
-      <a href="#kontak">Kontak</a>
+      <a href="#about">Tentang</a>
+      <a href="#contact">Kontak</a>
     </nav>
     <div class="navbar-right">
-      <i class="fas fa-bell notification-icon"></i>
       <a href="profilnew.html" class="user-avatar">
         <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" />
       </a>
@@ -114,39 +112,69 @@
       </div>
     </div>
 
-    <div class="lihat-semua-wrapper">
-      <button class="lihat-semua-btn">
-        <i class="fa fa-calendar"></i> Lihat Semua Event
-      </button>
+  <!-- TENTANG KAMI -->
+  <section id="about" class="about-section-centered">
+    <div class="about-content">
+      <span class="sub-title">Tentang Kami</span>
+      <h2>Platform Event <span>Terlengkap</span></h2>
+      <p>
+        EventKu hadir sebagai solusi digital terdepan untuk menghubungkan penyelenggara acara dengan audiens yang tepat. 
+        Kami berkomitmen memberikan pengalaman mencari, mengikuti, dan mengelola berbagai jenis event secara mudah, 
+        aman, dan menyenangkan bagi semua orang di seluruh Indonesia.
+      </p>
+      
+      <div class="about-stats-mini">
+        <div class="stat-item">
+          <strong>100%</strong>
+          <span>Aman & Terpercaya</span>
+        </div>
+        <div class="stat-item">
+          <strong>24/7</strong>
+          <span>Dukungan Pelanggan</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- STATISTICS -->
-  <section id="tentang" class="stats">
-    <div class="stat">
-      <h3>500+</h3>
-      <p>Event Tersedia</p>
-    </div>
-    <div class="stat">
-      <h3>50K+</h3>
-      <p>Peserta Bergabung</p>
-    </div>
-    <div class="stat">
-      <h3>1000+</h3>
-      <p>Penyelenggara</p>
-    </div>
-    <div class="stat">
-      <h3>4.8★</h3>
-      <p>Rating Pengguna</p>
-    </div>
-  </section>
+<footer id="contact" class="main-footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <h3 class="footer-logo">EventKu</h3>
+        <p>Platform terpercaya untuk menemukan dan mengelola event impianmu dengan mudah dan aman.</p>
+        <div class="social-icons">
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-facebook"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
 
-  <!-- FOOTER -->
-  <footer id="kontak">
-    <div class="footer-content">
-      <div class="logo">EventKu</div>
-      <p>Tempat terbaik untuk mencari event impianmu.</p>
-      <p class="copyright">© 2024 EventKu. Semua hak cipta dilindungi.</p>
+      <div class="footer-links">
+        <h3>Navigasi</h3>
+        <ul>
+          <li><a href="dashboard_new.html">Beranda</a></li>
+          <li><a href="#events">Cari Event</a></li>
+          <li><a href="#about">Tentang Kami</a></li>
+          <li><a href="#contact">Kontak</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-contact">
+        <h3>Hubungi Kami</h3>
+        <a href="mailto:support@eventku.com" class="contact-item">
+          <i class="fas fa-envelope"></i>support@eventku.com
+        </a>
+        <a href="tel:+6281234567890" class="contact-item">
+          <i class="fas fa-phone-alt"></i>+62 812 3456 7890
+        </a>
+        <p class="contact-item">
+          <i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia
+        </p>
+      </div>
+    </div>
+    
+    <div class="footer-bottom">
+      <p class="copyright">© 2024 **EventKu**. Semua hak cipta dilindungi.</p>
     </div>
   </footer>
 </body>

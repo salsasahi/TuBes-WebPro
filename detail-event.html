@@ -182,7 +182,8 @@
           ? locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1].replace(/<[^>]*>/g, '').trim()
           : 'Jl. Gatot Subroto, Jakarta Pusat';
         const dateBlock = document.querySelectorAll('.info-block')[0];
-        const eventDate = dateBlock.querySelector('p').textContent.split('\n')[0].trim();
+        const dateParts = dateBlock.querySelector('p').innerHTML.split('<br>');
+        const eventDate = `${dateParts[0].trim()} (${dateParts[1].trim()})`;
         
         const orderData = {
           eventName: eventTitle,

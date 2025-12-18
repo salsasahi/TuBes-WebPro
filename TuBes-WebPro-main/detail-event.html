@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Event - Tech Innovation Summit 2024</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="detail.css" />
+
+</head>
+<body>
+  <header class="navbar">
+    <div class="nav-left">
+      <a href="dashboard.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Detail Event
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="events.html">Events</a>
+      <a href="my-events.html">My Events</a>
+    </div>
+  </header>
+
+  <main class="event-container">
+    <div class="event-banner">
+      <img src="banner-tech.jpg" alt="Event Banner" />
+    </div>
+
+    <div class="event-detail-card">
+      <div class="event-tags">
+        <span class="tag blue">Technology</span>
+        <span class="tag green">Available</span>
+      </div>
+
+      <h1 class="event-title">Tech Innovation Summit 2024</h1>
+      <p class="event-subtitle">
+        Join us for an extraordinary gathering of tech innovators, entrepreneurs, and industry leaders. This summit will feature keynote speakers, interactive workshops, and networking opportunities that will shape the future of technology.
+      </p>
+
+      <div class="event-details-grid">
+        <div class="details-left">
+          <div class="info-block">
+            <i class="far fa-calendar-alt"></i>
+            <div>
+              <h4>Date & Time</h4>
+              <p>March 15, 2024<br>08:00 AM – 06:00 PM</p>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <i class="fas fa-map-marker-alt"></i>
+            <div>
+              <h4>Location</h4>
+              <p>Jakarta Convention Center<br>Jl. Gatot Subroto, Jakarta Pusat</p>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <i class="fas fa-users"></i>
+            <div>
+              <h4>Participants</h4>
+              <p>245 / 300 registered</p>
+              <div class="participant-bar">
+                <div class="participant-progress"></div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+
+        <div class="details-right">
+          <div class="event-organizer">
+            <h3>Event Organizer</h3>
+            <p><strong>Tech Innovation Hub</strong><br>Event Organizer</p>
+            <p><i class="fas fa-envelope"></i> info@techinnovation.com</p>
+            <p><i class="fas fa-phone"></i> +62 21 5555 0123</p>
+            <p><i class="fas fa-globe"></i> www.techinnovation.com</p>
+          </div>
+        </div>
+      </div>
+
+
+      <section class="about-event">
+        <h3>About This Event</h3>
+        <p>
+          The Tech Innovation Summit 2024 brings together the brightest minds in technology to explore the latest trends, innovations, and future possibilities. This one-day event features inspiring keynote presentations, hands-on workshops, and valuable networking opportunities.
+        </p>
+        <p>
+            Attendees will have the chance to learn from industry experts, discover cutting-edge technologies, and connect with like-minded professionals. Whether you're a startup founder, developer, or tech enthusiast, this summit offers valuable insights and connections.
+        </p>
+      </section>
+
+      <section class="what-you-get">
+        <h3>What You'll Get</h3>
+        <ul>
+          <li>Access to 8+ expert-led sessions</li>
+          <li>Networking lunch and coffee breaks</li>
+          <li>Event materials and digital resources</li>
+          <li>Certificate of attendance</li>
+          <li>Exclusive access to speaker presentations</li>
+        </ul>
+      </section>
+
+      <section class="ticket-quantity">
+        <h3>Jumlah Tiket</h3>
+        <div class="ticket-item">
+          <div class="ticket-info">
+            <strong>Pax</strong>
+            <span>IDR 40.000/pax</span>
+          </div>
+          <div class="ticket-counter">
+            <button class="counter-btn" id="decrease" aria-label="Kurangi tiket">-</button>
+            <span id="quantity">1</span>
+            <button class="counter-btn" id="increase" aria-label="Tambah tiket">+</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="order-footer">
+        <div class="total-price">
+          <span id="total-label">Total (1 pax):</span>
+          <strong id="total-price">IDR 40.000</strong>
+        </div>
+        <button class="btn order" id="pesanBtn">Pesan</button>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    © 2024 Event Platform. All rights reserved.
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const decreaseBtn = document.getElementById('decrease');
+      const increaseBtn = document.getElementById('increase');
+      const quantityEl = document.getElementById('quantity');
+      const totalLabelEl = document.getElementById('total-label');
+      const totalPriceEl = document.getElementById('total-price');
+      
+      const basePrice = 40000;
+      let quantity = 1;
+
+      function updateBill() {
+        quantityEl.textContent = quantity;
+        
+        const total = basePrice * quantity;
+        
+        totalPriceEl.textContent = `IDR ${total.toLocaleString('id-ID')}`;
+        
+        totalLabelEl.textContent = `Total (${quantity} pax):`;
+      }
+
+      increaseBtn.addEventListener('click', function() {
+        quantity++;
+        updateBill();
+      });
+
+      decreaseBtn.addEventListener('click', function() {
+        if (quantity > 1) {
+          quantity--;
+          updateBill();
+        }
+      });
+      
+      updateBill();
+      
+      const pesanBtn = document.getElementById('pesanBtn');
+      pesanBtn.addEventListener('click', function () {
+        // Ambil data dari elemen yang ada
+        const eventTitle = document.querySelector('.event-title').textContent;
+        const locationBlock = document.querySelectorAll('.info-block')[1];
+        const locationName = locationBlock.querySelector('h4').nextElementSibling.querySelector('strong') 
+          ? locationBlock.querySelector('h4').nextElementSibling.textContent.split('\n')[0] 
+          : 'Jakarta Convention Center';
+        const locationAddress = locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1] 
+          ? locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1].replace(/<[^>]*>/g, '').trim()
+          : 'Jl. Gatot Subroto, Jakarta Pusat';
+        const dateBlock = document.querySelectorAll('.info-block')[0];
+        const eventDate = dateBlock.querySelector('p').textContent.split('\n')[0].trim();
+        
+        const orderData = {
+          eventName: eventTitle,
+          quantity: quantity,
+          pricePerTicket: basePrice,
+          totalPrice: basePrice * quantity,
+          location: locationName,
+          address: locationAddress,
+          date: eventDate
+        };
+        localStorage.setItem('orderData', JSON.stringify(orderData));
+        
+        window.location.href = 'detail2.html';
+      });
+    });
+  </script>
+
+</body>
+</html>

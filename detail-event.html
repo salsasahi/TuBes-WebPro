@@ -172,14 +172,26 @@
       
       const pesanBtn = document.getElementById('pesanBtn');
       pesanBtn.addEventListener('click', function () {
+        // Ambil data dari elemen yang ada
+        const eventTitle = document.querySelector('.event-title').textContent;
+        const locationBlock = document.querySelectorAll('.info-block')[1];
+        const locationName = locationBlock.querySelector('h4').nextElementSibling.querySelector('strong') 
+          ? locationBlock.querySelector('h4').nextElementSibling.textContent.split('\n')[0] 
+          : 'Jakarta Convention Center';
+        const locationAddress = locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1] 
+          ? locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1].replace(/<[^>]*>/g, '').trim()
+          : 'Jl. Gatot Subroto, Jakarta Pusat';
+        const dateBlock = document.querySelectorAll('.info-block')[0];
+        const eventDate = dateBlock.querySelector('p').textContent.split('\n')[0].trim();
+        
         const orderData = {
-          eventName: document.querySelector('.event-title').textContent,
+          eventName: eventTitle,
           quantity: quantity,
           pricePerTicket: basePrice,
           totalPrice: basePrice * quantity,
-          location: document.querySelector('.event-location-name').textContent,
-          address: document.querySelector('.event-address').textContent,
-          date: document.querySelector('.event-date').textContent
+          location: locationName,
+          address: locationAddress,
+          date: eventDate
         };
         localStorage.setItem('orderData', JSON.stringify(orderData));
         

@@ -143,8 +143,62 @@
       const totalLabelEl = document.getElementById('total-label');
       const totalPriceEl = document.getElementById('total-price');
       
-      const basePrice = 40000;
+      let basePrice = 40000;
       let quantity = 1;
+      
+      // Cek apakah ada data event dari localStorage
+      const selectedEventData = localStorage.getItem('selectedEvent');
+      if (selectedEventData) {
+        const eventData = JSON.parse(selectedEventData);
+        
+        // Update judul halaman
+        document.title = `Detail Event - ${eventData.title}`;
+        
+        // Update konten halaman
+        const eventTitle = document.querySelector('.event-title');
+        if (eventTitle) eventTitle.textContent = eventData.title;
+        
+        const eventSubtitle = document.querySelector('.event-subtitle');
+        if (eventSubtitle) eventSubtitle.textContent = eventData.description;
+        
+        // Update category tag
+        const categoryTag = document.querySelector('.tag.blue');
+        if (categoryTag) categoryTag.textContent = eventData.category;
+        
+        // Update tanggal dan waktu
+        const dateBlock = document.querySelectorAll('.info-block')[0];
+        if (dateBlock) {
+          const dateP = dateBlock.querySelector('p');
+          if (dateP) dateP.innerHTML = `${eventData.date} <br>${eventData.time}`;
+        }
+        
+        // Update lokasi
+        const locationBlock = document.querySelectorAll('.info-block')[1];
+        if (locationBlock) {
+          const locationP = locationBlock.querySelector('p');
+          if (locationP) locationP.innerHTML = `${eventData.location}<br>${eventData.address}`;
+        }
+        
+        // Update harga
+        basePrice = eventData.price || 40000;
+        const ticketPriceSpan = document.querySelector('.ticket-info span');
+        if (ticketPriceSpan) ticketPriceSpan.textContent = `IDR ${basePrice.toLocaleString('id-ID')}/pax`;
+        
+        // Update banner image jika ada
+        if (eventData.image) {
+          const bannerImg = document.querySelector('.event-banner img');
+          if (bannerImg) bannerImg.src = eventData.image;
+        }
+        
+        // Update about section
+        const aboutSection = document.querySelector('.about-event');
+        if (aboutSection) {
+          const aboutP = aboutSection.querySelectorAll('p');
+          if (aboutP[0]) aboutP[0].textContent = eventData.description;
+        }
+        
+        console.log('Event data loaded:', eventData);
+      }
 
       function updateBill() {
         quantityEl.textContent = quantity;
@@ -155,6 +209,9 @@
         
         totalLabelEl.textContent = `Total (${quantity} pax):`;
       }
+      
+      // Panggil updateBill setelah semua data dimuat
+      updateBill();
 
       increaseBtn.addEventListener('click', function() {
         quantity++;
@@ -167,8 +224,6 @@
           updateBill();
         }
       });
-      
-      updateBill();
       
       const pesanBtn = document.getElementById('pesanBtn');
       pesanBtn.addEventListener('click', function () {

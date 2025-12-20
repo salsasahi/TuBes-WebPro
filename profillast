@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EventHub - Profile</title>
+    <link rel="stylesheet" href="profillast.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo">
+          <div class="logo-icon">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <span class="logo-text">EventHub</span>
+        </div>
+        <nav class="nav">
+          <a href="#" class="nav-link">Dashboard</a>
+          <a href="#" class="nav-link">Events</a>
+          <a href="#" class="nav-link">Calendar</a>
+          <a href="#" class="nav-link active">Profile</a>
+        </nav>
+      </div>
+      <div class="header-right">
+        <button class="icon-btn">
+          <i class="fas fa-bell"></i>
+        </button>
+        <div class="user-avatar">
+          <img
+            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+            alt="User"
+          />
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Welcome Section -->
+      <section class="welcome-section">
+        <h1 class="welcome-title">Welcome back, Sarah!</h1>
+        <p class="welcome-subtitle">
+          Manage your events and discover new opportunities
+        </p>
+      </section>
+
+      <!-- Event Summary Cards -->
+      <section class="summary-cards">
+        <div class="summary-card">
+          <div class="summary-icon blue">
+            <i class="fas fa-calendar"></i>
+          </div>
+          <div class="summary-content">
+            <p class="summary-label">Total Events</p>
+            <h2 class="summary-number">24</h2>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-icon purple">
+            <i class="fas fa-check-circle"></i>
+          </div>
+          <div class="summary-content">
+            <p class="summary-label">Completed</p>
+            <h2 class="summary-number">16</h2>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search Bar -->
+      <section class="search-filter-section">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search events..." id="searchInput" />
+        </div>
+      </section>
+
+      <!-- Events Container (My Events + Recommended) -->
+      <div class="events-container">
+        <!-- My Events Section -->
+        <section class="my-events-section">
+          <div class="section-header">
+            <h2 class="section-title">My Events</h2>
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="all">All</button>
+              <button class="tab-btn" data-tab="past">Past</button>
+            </div>
+          </div>
+
+          <div class="events-list" id="eventsList">
+            <!-- Event Card 1 -->
+            <div
+              class="event-card"
+              data-status="registered"
+              data-date="2024-03-15"
+            >
+              <div class="event-date blue">
+                <span class="date-month">MAR</span>
+                <span class="date-day">15</span>
+              </div>
+              <div class="event-content">
+                <h3 class="event-title">Web Development Workshop</h3>
+                <p class="event-description">
+                  Learn modern web development techniques with React and Node.js
+                </p>
+                <div class="event-details">
+                  <span class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    9:00 AM - 4:00 PM
+                  </span>
+                  <span class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Online
+                  </span>
+                </div>
+                <div class="event-footer">
+                  <span class="status-badge registered">Registered</span>
+                  <a href="#" class="action-link">View Details</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Event Card 2 -->
+            <div
+              class="event-card"
+              data-status="pending"
+              data-date="2024-03-22"
+            >
+              <div class="event-date purple">
+                <span class="date-month">MAR</span>
+                <span class="date-day">22</span>
+              </div>
+              <div class="event-content">
+                <h3 class="event-title">Digital Marketing Summit</h3>
+                <p class="event-description">
+                  Explore the latest trends in digital marketing and social
+                  media
+                </p>
+                <div class="event-details">
+                  <span class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    9:00 AM - 5:00 PM
+                  </span>
+                  <span class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Jakarta Convention Center
+                  </span>
+                </div>
+                <div class="event-footer">
+                  <span class="status-badge pending">Pending</span>
+                  <a href="#" class="action-link">View Details</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Event Card 3 -->
+            <div
+              class="event-card"
+              data-status="completed"
+              data-date="2024-02-28"
+            >
+              <div class="event-date green">
+                <span class="date-month">FEB</span>
+                <span class="date-day">28</span>
+              </div>
+              <div class="event-content">
+                <h3 class="event-title">UI/UX Design Masterclass</h3>
+                <p class="event-description">
+                  Master the fundamentals of user interface and experience
+                  design
+                </p>
+                <div class="event-details">
+                  <span class="detail-item">
+                    <i class="fas fa-clock"></i>
+                    1:00 PM - 6:00 PM
+                  </span>
+                  <span class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Online
+                  </span>
+                </div>
+                <div class="event-footer">
+                  <span class="status-badge completed">Completed</span>
+                  <a href="#" class="action-link">Download Certificate</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Recommended Events Section -->
+        <section class="recommended-section">
+          <h2 class="section-title">Recommended Events</h2>
+          <div class="recommended-list">
+            <!-- Recommended Event 1 -->
+            <div class="recommended-card">
+              <div class="recommended-image">
+                <img
+                  src="https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=400&h=250&fit=crop"
+                  alt="Tech Innovation Conference"
+                />
+              </div>
+              <div class="recommended-content">
+                <h3 class="recommended-title">Tech Innovation Conference</h3>
+                <p class="recommended-details">April 5, 2024 • Online</p>
+                <button class="register-btn">Register Now</button>
+              </div>
+            </div>
+
+            <!-- Recommended Event 2 -->
+            <div class="recommended-card">
+              <div class="recommended-image">
+                <img
+                  src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=250&fit=crop"
+                  alt="Leadership Workshop"
+                />
+              </div>
+              <div class="recommended-content">
+                <h3 class="recommended-title">Leadership Workshop</h3>
+                <p class="recommended-details">April 12, 2024 • Surabaya</p>
+                <button class="register-btn">Register Now</button>
+              </div>
+            </div>
+
+            <!-- Recommended Event 3 -->
+            <div class="recommended-card">
+              <div class="recommended-image">
+                <img
+                  src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop"
+                  alt="Creative Design Workshop"
+                />
+              </div>
+              <div class="recommended-content">
+                <h3 class="recommended-title">Creative Design Workshop</h3>
+                <p class="recommended-details">April 18, 2024 • Bandung</p>
+                <button class="register-btn">Register Now</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script>
+      // Tab Navigation
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const eventCards = document.querySelectorAll(".event-card");
+
+      tabButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          // Remove active class from all tabs
+          tabButtons.forEach((b) => b.classList.remove("active"));
+          // Add active class to clicked tab
+          btn.classList.add("active");
+
+          const tab = btn.dataset.tab;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+
+          eventCards.forEach((card) => {
+            const cardDate = new Date(card.dataset.date);
+            cardDate.setHours(0, 0, 0, 0);
+
+            if (tab === "all") {
+              card.style.display = "flex";
+            } else if (tab === "past") {
+              card.style.display = cardDate < today ? "flex" : "none";
+            }
+          });
+        });
+      });
+
+      // Search Functionality
+      const searchInput = document.getElementById("searchInput");
+      searchInput.addEventListener("input", (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        eventCards.forEach((card) => {
+          const title = card
+            .querySelector(".event-title")
+            .textContent.toLowerCase();
+          const description = card
+            .querySelector(".event-description")
+            .textContent.toLowerCase();
+
+          if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+        });
+      });
+
+      // Register Button Functionality
+      const registerButtons = document.querySelectorAll(".register-btn");
+      registerButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const eventTitle = btn
+            .closest(".recommended-card")
+            .querySelector(".recommended-title").textContent;
+          alert(`Thank you for registering to ${eventTitle}!`);
+          btn.textContent = "Registered";
+          btn.style.backgroundColor = "#10b981";
+          btn.disabled = true;
+        });
+      });
+
+      // View Details Link
+      const actionLinks = document.querySelectorAll(".action-link");
+      actionLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const eventTitle = link
+            .closest(".event-card")
+            .querySelector(".event-title").textContent;
+          alert(`Viewing details for: ${eventTitle}`);
+        });
+      });
+
+      // Notification Bell
+      const notificationBtn = document.querySelector(".icon-btn");
+      notificationBtn.addEventListener("click", () => {
+        alert("You have 3 new notifications!");
+      });
+
+      // Isolasi scroll pada Recommended Events Section
+      const recommendedSection = document.querySelector(".recommended-section");
+      if (recommendedSection) {
+        recommendedSection.addEventListener("wheel", (e) => {
+          const element = recommendedSection;
+          const isAtTop = element.scrollTop === 0;
+          const isAtBottom =
+            element.scrollHeight - element.scrollTop === element.clientHeight;
+
+          // Jika scroll ke atas dan sudah di atas, atau scroll ke bawah dan sudah di bawah
+          // Biarkan scroll ke parent (halaman utama)
+          if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+            return; // Biarkan scroll event bubble up
+          }
+
+          // Jika masih ada konten untuk di-scroll, cegah scroll ke parent
+          e.stopPropagation();
+        });
+
+        // Mencegah scroll dengan touch pada mobile
+        let touchStartY = 0;
+        recommendedSection.addEventListener("touchstart", (e) => {
+          touchStartY = e.touches[0].clientY;
+        });
+
+        recommendedSection.addEventListener("touchmove", (e) => {
+          const touchY = e.touches[0].clientY;
+          const element = recommendedSection;
+          const isAtTop = element.scrollTop === 0;
+          const isAtBottom =
+            element.scrollHeight - element.scrollTop === element.clientHeight;
+
+          const scrollingDown = touchY < touchStartY;
+          const scrollingUp = touchY > touchStartY;
+
+          if ((scrollingUp && isAtTop) || (scrollingDown && isAtBottom)) {
+            return; // Biarkan scroll event bubble up
+          }
+
+          e.stopPropagation();
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -116,12 +116,6 @@ html {
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .user-avatar img {
@@ -130,101 +124,49 @@ html {
   object-fit: cover;
 }
 
-/* Profile Dropdown */
-.profile-dropdown {
+/* Logout Popup */
+.logout-popup {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
   right: 0;
-  width: 250px;
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   opacity: 0;
   visibility: hidden;
   transform: translateY(-10px);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   z-index: 1000;
   overflow: hidden;
 }
 
-.profile-dropdown.show {
+.logout-popup.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
-.dropdown-header {
+.logout-btn {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-  color: #ffffff;
-}
-
-.dropdown-avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.dropdown-user-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.dropdown-username {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.dropdown-email {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-.dropdown-divider {
-  height: 1px;
-  background: #e2e8f0;
-  margin: 0;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  color: #475569;
-  text-decoration: none;
-  font-size: 14px;
-  transition: all 0.2s;
-  cursor: pointer;
-  border: none;
+  gap: 10px;
+  padding: 12px 20px;
   background: none;
-  width: 100%;
-  text-align: left;
-}
-
-.dropdown-item:hover {
-  background: #f1f5f9;
-  color: #2563eb;
-}
-
-.dropdown-item i {
-  width: 18px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.dropdown-item.logout-btn {
+  border: none;
   color: #ef4444;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
 }
 
-.dropdown-item.logout-btn:hover {
+.logout-btn:hover {
   background: #fef2f2;
-  color: #dc2626;
+}
+
+.logout-btn i {
+  font-size: 14px;
 }
 
 /* Main Content */

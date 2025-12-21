@@ -354,6 +354,37 @@ body {
   background: #2563eb;
 }
 
+/* Wrapper untuk menengahkan tombol */
+.lihat-semua-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;     
+  margin-bottom: 80px;  
+  width: 100%;
+}
+
+/* style tombol lihat semua event */
+.lihat-semua-btn {
+  background: #3b82f6;    
+  color: white;             
+  padding: 10px 24px;      
+  border-radius: 8px;       
+  font-size: 14px;          
+  font-weight: 500;
+  border: none;             
+  cursor: pointer;          
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;                 
+}
+
+/* Efek Hover */
+.lihat-semua-btn:hover {
+  background: #2563eb;      
+  transform: translateY(-2px); 
+}
+
 /* ========== STATS ========== */
 .stats {
   display: flex;

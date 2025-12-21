@@ -5,10 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Konfirmasi Pemesanan</title>
     <link rel="stylesheet" href="style-detail2.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+    
+    <style>
+      .btn-pesan:disabled { background-color: #ccc; cursor: not-allowed; }
+      .loading-spinner {
+        display: inline-block; width: 1rem; height: 1rem;
+        border: 2px solid #fff; border-radius: 50%;
+        border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 5px;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
   </head>
   <body>
     <header class="navbar">
@@ -18,9 +25,8 @@
       </div>
       <nav class="nav-links">
         <a href="dashboard_new.html">Dashboard</a>
-        <a href="#">Events</a>
-        <a href="#">My Events</a>
-        <img src="profile.png" alt="User" class="avatar" />
+        <a href="profilnew.html">My Events</a>
+        <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" class="avatar" />
       </nav>
     </header>
 
@@ -28,11 +34,9 @@
       <section class="card">
         <div class="section-header">
           <h1>Konfirmasi Pemesanan</h1>
-          <h2>Tech Innovation Summit 2024</h2>
-          <div class="event-location">
-            <strong>Jakarta Convention Center</strong><br />
-            Jl. Gatot Subroto, Jakarta Pusat<br />
-            <span class="ticket-info">1 Tiket • Pax 1</span>
+          <h2 id="eventName">Nama Event</h2>
+          <div class="event-location" id="eventLocationDisplay">
+            <strong>Location</strong><br />Address<br /><span class="ticket-info">-</span>
           </div>
         </div>
 
@@ -40,20 +44,10 @@
 
         <div class="event-date-section">
           <h3>Tanggal Event</h3>
-          <p class="event-date">Sab, 8 Nov 2025</p>
+          <p class="event-date" id="eventDateDisplay">-</p>
           <ul class="event-notes">
-            <li>
-              <i class="bi bi-x-circle-fill"></i>
-              <span>Tidak bisa refund</span>
-            </li>
-            <li>
-              <i class="bi bi-square"></i>
-              <span>Tempat duduk bebas</span>
-            </li>
-            <li>
-              <i class="bi bi-calendar-event"></i>
-              <span>Berlaku di tanggal terpilih</span>
-            </li>
+            <li><i class="bi bi-x-circle-fill"></i><span>Tidak bisa refund</span></li>
+            <li><i class="bi bi-square"></i><span>Tempat duduk bebas</span></li>
           </ul>
         </div>
 
@@ -61,17 +55,15 @@
 
         <div class="form-section">
           <h3>Detail Pemesanan</h3>
-          <form>
+          <form id="bookingForm">
             <div class="form-group">
               <label>Nama Lengkap</label>
-              <input type="text" placeholder="Nama Lengkap" required />
+              <input type="text" id="inputName" placeholder="Nama Lengkap" required />
             </div>
-
             <div class="form-group">
               <label>Nomor Handphone</label>
-              <input type="tel" placeholder="Nomor Handphone" required />
+              <input type="tel" id="inputPhone" placeholder="Nomor Handphone" required />
             </div>
-
             <div class="form-group">
               <label>Jenis Kelamin</label>
               <div class="radio-group">
@@ -85,10 +77,9 @@
                 </label>
               </div>
             </div>
-
             <div class="form-group">
               <label>Alamat Email</label>
-              <input type="email" placeholder="Alamat Email" required />
+              <input type="email" id="inputEmail" placeholder="Alamat Email" required />
             </div>
           </form>
         </div>
@@ -98,100 +89,176 @@
         <div class="price-section">
           <h3>Detail Harga</h3>
           <div class="price-item" id="ticket-price-item">
-            <span>Tiket 1 (Pax)</span>
-            <span>IDR 40.000</span>
+            <span>Tiket x (Pax)</span><span>IDR 0</span>
           </div>
           <div class="price-item">
-            <span>Biaya Layanan</span>
-            <span>IDR 2.000</span>
+            <span>Biaya Layanan</span><span>IDR 2.000</span>
           </div>
           <hr class="price-divider" />
           <div class="total">
-            <span>Total Pembayaran</span>
-            <span class="total-amount">IDR 42.000</span>
+            <span>Total Pembayaran</span><span class="total-amount" id="totalAmountDisplay">IDR 0</span>
           </div>
         </div>
 
-        <button class="btn-pesan">Pesan</button>
+        <button class="btn-pesan" id="submitBtn">Bayar Sekarang</button>
       </section>
     </main>
 
-    <footer>
-      <div class="footer-content">
-        <p class="copyright">© 2024 Event Platform. All rights reserved.</p>
-      </div>
-    </footer>
-
     <script>
-      // Ambil data dari localStorage
+      // --- CONFIG API ---
+      const API_BASE_URL = 'http://127.0.0.1:8000';
+      const token = localStorage.getItem('authToken');
+      const userDataStr = localStorage.getItem('userData');
+
       document.addEventListener('DOMContentLoaded', function() {
-        const orderData = localStorage.getItem('orderData');
-        
-        if (orderData) {
-          
-          const data = JSON.parse(orderData);
-          
-          // Update judul event
-          document.querySelector('.section-header h2').textContent = data.eventName;
-          
-          // Update lokasi
-          const locationDiv = document.querySelector('.event-location');
-          locationDiv.innerHTML = `
-            <strong>${data.location}</strong><br />
-            ${data.address}<br />
-            <span class="ticket-info">${data.quantity} Tiket • Pax ${data.quantity}</span>
-          `;
-          
-          // Update tanggal
-          document.querySelector('.event-date').textContent = data.date;
-          
-          // Update harga tiket
-          const priceItemTicket = document.querySelector('#ticket-price-item');
-          priceItemTicket.innerHTML = `
-            <span>Tiket ${data.quantity} (Pax)</span>
-            <span>IDR ${(data.pricePerTicket * data.quantity).toLocaleString('id-ID')}</span>
-          `;
-          
-          // Biaya layanan tetap 2.000
-          const serviceFee = 2000;
-          const totalWithFee = data.totalPrice + serviceFee;
-          
-          // Update biaya layanan (sudah ada di HTML, tidak perlu diubah)
-          
-          // Update total
-          document.querySelector('.total-amount').textContent = `IDR ${totalWithFee.toLocaleString('id-ID')}`;
+        // 1. Cek Login
+        if (!token) {
+          alert("Anda harus login untuk memesan.");
+          window.location.href = "login.html";
+          return;
         }
-        
-        // Event listener untuk tombol Pesan
-        document.querySelector('.btn-pesan').addEventListener('click', function(e) {
-          e.preventDefault();
-          
-          // Validasi form
-          const nama = document.querySelector('input[type="text"]').value;
-          const telp = document.querySelector('input[type="tel"]').value;
-          const email = document.querySelector('input[type="email"]').value;
-          
-          if (!nama || !telp || !email) {
-            alert('Mohon lengkapi semua data pemesanan!');
+
+        // 2. Prefill Data User
+        if (userDataStr) {
+            try {
+                const user = JSON.parse(userDataStr);
+                document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
+                if(user.username) document.getElementById('inputName').value = user.username;
+                if(user.email) document.getElementById('inputEmail').value = user.email;
+            } catch (e) {}
+        }
+
+        // 3. Ambil Data dari LocalStorage (Halaman sebelumnya)
+        const orderDataStr = localStorage.getItem('orderData');
+        if (!orderDataStr) {
+            alert("Data pemesanan tidak ditemukan.");
+            window.location.href = "dashboard_new.html";
             return;
-          }
-          
-          // Validasi email
-          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(email)) {
-            alert('Format email tidak valid!');
-            return;
-          }
-          
-          alert('Pemesanan berhasil! Terima kasih telah memesan tiket.');
-          
-          // Clear localStorage
-          localStorage.removeItem('orderData');
-          
-          // Redirect ke dashboard
-          window.location.href = 'dashboard_new.html';
+        }
+
+        const data = JSON.parse(orderDataStr);
+        renderOrderDetails(data);
+
+        // 4. Listener Tombol Pesan
+        document.getElementById('submitBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            submitBooking(data);
         });
       });
+
+      // --- RENDER UI ---
+      function renderOrderDetails(data) {
+          document.getElementById('eventName').textContent = data.eventName;
+          document.getElementById('eventLocationDisplay').innerHTML = `
+            <strong>${data.location}</strong><br />${data.address || ''}<br />
+            <span class="ticket-info">${data.quantity} Tiket • Pax ${data.quantity}</span>
+          `;
+          document.getElementById('eventDateDisplay').textContent = data.date;
+          
+          const totalPriceTickets = data.pricePerTicket * data.quantity;
+          document.getElementById('ticket-price-item').innerHTML = `
+            <span>Tiket ${data.quantity} (Pax)</span>
+            <span>IDR ${totalPriceTickets.toLocaleString('id-ID')}</span>
+          `;
+          
+          const totalWithFee = totalPriceTickets + 2000;
+          document.getElementById('totalAmountDisplay').textContent = `IDR ${totalWithFee.toLocaleString('id-ID')}`;
+      }
+
+      // --- LOGIKA PEMBAYARAN (2 STEP) ---
+      async function submitBooking(orderData) {
+          const btn = document.getElementById('submitBtn');
+          const nama = document.getElementById('inputName').value.trim();
+          const telp = document.getElementById('inputPhone').value.trim();
+          const email = document.getElementById('inputEmail').value.trim();
+          const gender = document.querySelector('input[name="gender"]:checked').value;
+
+          if (!nama || !telp || !email) {
+            alert('Mohon lengkapi semua data!');
+            return;
+          }
+
+          // PAYLOAD (Sesuaikan dengan BookingController Anda)
+          const payload = {
+              event_id: parseInt(orderData.eventId),
+              quantity: parseInt(orderData.quantity),
+              customer_name: nama,
+              customer_phone: telp,
+              customer_email: email,
+              gender: gender // Value: "Laki-Laki" atau "Perempuan"
+          };
+
+          try {
+              // Start Loading
+              btn.disabled = true;
+              btn.innerHTML = `<span class="loading-spinner"></span> Memproses...`;
+
+              // STEP 1: CREATE BOOKING
+              console.log("Creating Booking...");
+              const bookingRes = await fetch(`${API_BASE_URL}/api/bookings`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  },
+                  body: JSON.stringify(payload)
+              });
+
+              const bookingResult = await bookingRes.json();
+
+              if (!bookingRes.ok) {
+                  // Handle Validasi Error
+                  let errorMsg = bookingResult.message || "Gagal membuat pesanan.";
+                  if (bookingResult.errors) {
+                      errorMsg += "\n" + Object.values(bookingResult.errors).map(e => `- ${e[0]}`).join("\n");
+                  }
+                  throw new Error(errorMsg);
+              }
+
+              // Ambil ID Booking Baru
+              const bookingId = bookingResult.data?.id || bookingResult.data?.booking?.id;
+              
+              if (!bookingId) throw new Error("ID Booking tidak ditemukan.");
+
+              // STEP 2: GET PAYMENT LINK (Request ke endpoint /pay)
+              console.log("Getting Payment Link...");
+              btn.innerHTML = `<span class="loading-spinner"></span> Menyiapkan Pembayaran...`;
+
+              const payRes = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/pay`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  }
+              });
+
+              const payResult = await payRes.json();
+
+              if (!payRes.ok) throw new Error(payResult.message || "Gagal mengambil link pembayaran.");
+
+              // Ambil URL Redirect
+              const paymentUrl = payResult.links?.redirect_to_payment;
+
+              if (paymentUrl) {
+                  // SUKSES! Redirect ke Midtrans
+                  localStorage.removeItem('orderData');
+                  localStorage.setItem('last_booking_id', bookingId);
+                  
+                  window.location.href = paymentUrl; 
+              } else {
+                  throw new Error("Link pembayaran tidak ditemukan di respon server.");
+              }
+
+          } catch (error) {
+              alert(error.message);
+              console.error(error);
+          } finally {
+              btn.disabled = false;
+              btn.innerHTML = 'Bayar Sekarang';
+          }
+      }
     </script>
   </body>
 </html>

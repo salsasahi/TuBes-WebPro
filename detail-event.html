@@ -3,19 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detail Event - Tech Innovation Summit 2024</title>
+  <title>Detail Event - EventKu</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
   <link rel="stylesheet" href="detail.css" />
 
+  <style>
+    /* Loading Overlay */
+    #loadingOverlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,0.95);
+        display: flex; flex-direction: column;
+        justify-content: center; align-items: center;
+        z-index: 9999; font-family: 'Poppins', sans-serif;
+    }
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
+
+  <div id="loadingOverlay">
+      <i class="fas fa-spinner fa-spin fa-3x" style="color: #4A90E2; margin-bottom: 20px;"></i>
+      <h3 style="color: #333;">Memuat Event...</h3>
+  </div>
+
   <header class="navbar">
     <div class="nav-left">
-      <a href="dashboard.html" class="back-btn">
-        <i class="fas fa-arrow-left"></i> Detail Events
+      <a href="dashboard_new.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
       </a>
     </div>
     <div class="nav-right">
@@ -25,21 +41,20 @@
     </div>
   </header>
 
-  <main class="event-container">
+  <main class="event-container" id="mainContent" style="visibility: hidden;">
     <div class="event-banner">
-      <img src="banner-tech.jpg" alt="Event Banner" />
+      <img id="eventBanner" src="" alt="Event Banner" onerror="this.onerror=null; this.src='tech.jpg';"/>
     </div>
 
     <div class="event-detail-card">
       <div class="event-tags">
-        <span class="tag blue">Technology</span>
-        <span class="tag green">Available</span>
+        <span class="tag blue" id="eventCategory">Category</span>
+        <span class="tag green" id="eventStatus">Available</span>
       </div>
 
-      <h1 class="event-title">Tech Innovation Summit 2024</h1>
-      <p class="event-subtitle">
-        Join us for an extraordinary gathering of tech innovators, entrepreneurs, and industry leaders. This summit will feature keynote speakers, interactive workshops, and networking opportunities that will shape the future of technology.
-      </p>
+      <h1 class="event-title" id="eventTitle">Loading...</h1>
+      
+      <p class="event-subtitle" id="eventDescriptionShort">Loading description...</p>
 
       <div class="event-details-grid">
         <div class="details-left">
@@ -47,7 +62,7 @@
             <i class="far fa-calendar-alt"></i>
             <div>
               <h4>Date & Time</h4>
-              <p>March 15, 2024 <br>08:00 AM – 06:00 PM</p>
+              <p id="eventDateTime">-</p>
             </div>
           </div>
 
@@ -55,7 +70,7 @@
             <i class="fas fa-map-marker-alt"></i>
             <div>
               <h4>Location</h4>
-              <p>Jakarta Convention Center<br>Jl. Gatot Subroto, Jakarta Pusat</p>
+              <p id="eventLocation">-</p>
             </div>
           </div>
 
@@ -63,9 +78,9 @@
             <i class="fas fa-users"></i>
             <div>
               <h4>Participants</h4>
-              <p>245 / 300 registered</p>
+              <p id="eventQuotaInfo">0 / 0 registered</p>
               <div class="participant-bar">
-                <div class="participant-progress"></div>
+                <div class="participant-progress" id="quotaProgress" style="width: 0%"></div>
               </div>
             </div>
           </div>
@@ -75,34 +90,20 @@
         <div class="details-right">
           <div class="event-organizer">
             <h3>Event Organizer</h3>
-            <p><strong>Tech Innovation Hub</strong></p>
-            <p><i class="fas fa-envelope"></i> info@techinnovation.com</p>
-            <p><i class="fas fa-phone"></i> +62 21 5555 0123</p>
-            <p><i class="fas fa-globe"></i> www.techinnovation.com</p>
+            <p><strong id="organizerName">-</strong></p>
+            <p><i class="fas fa-envelope"></i> <span id="organizerEmail">-</span></p>
           </div>
         </div>
       </div>
 
-
       <section class="about-event">
         <h3>About This Event</h3>
-        <p>
-          The Tech Innovation Summit 2024 brings together the brightest minds in technology to explore the latest trends, innovations, and future possibilities. This one-day event features inspiring keynote presentations, hands-on workshops, and valuable networking opportunities.
-        </p>
-        <p>
-            Attendees will have the chance to learn from industry experts, discover cutting-edge technologies, and connect with like-minded professionals. Whether you're a startup founder, developer, or tech enthusiast, this summit offers valuable insights and connections.
-        </p>
+        <p id="eventDescriptionFull" style="white-space: pre-line;">-</p>
       </section>
 
       <section class="what-you-get">
         <h3>What You'll Get</h3>
-        <ul>
-          <li>Access to 8+ expert-led sessions</li>
-          <li>Networking lunch and coffee breaks</li>
-          <li>Event materials and digital resources</li>
-          <li>Certificate of attendance</li>
-          <li>Exclusive access to speaker presentations</li>
-        </ul>
+        <p id="eventBenefits" style="white-space: pre-line; line-height: 1.6;">-</p>
       </section>
 
       <section class="ticket-quantity">
@@ -110,7 +111,7 @@
         <div class="ticket-item">
           <div class="ticket-info">
             <strong>Pax</strong>
-            <span>IDR 40.000/pax</span>
+            <span id="priceDisplay">IDR 0</span>
           </div>
           <div class="ticket-counter">
             <button class="counter-btn" id="decrease" aria-label="Kurangi tiket">-</button>
@@ -123,9 +124,9 @@
       <div class="order-footer">
         <div class="total-price">
           <span id="total-label">Total (1 pax):</span>
-          <strong id="total-price">IDR 40.000</strong>
+          <strong id="total-price">IDR 0</strong>
         </div>
-        <button class="btn order" id="pesanBtn">Pesan</button>
+        <button class="btn order" id="pesanBtn">Pesan Tiket</button>
       </div>
 
     </div>
@@ -136,124 +137,212 @@
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const decreaseBtn = document.getElementById('decrease');
-      const increaseBtn = document.getElementById('increase');
-      const quantityEl = document.getElementById('quantity');
-      const totalLabelEl = document.getElementById('total-label');
-      const totalPriceEl = document.getElementById('total-price');
+    // --- KONFIGURASI API ---
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+    const token = localStorage.getItem('authToken');
+
+    // --- STATE VARIABLES ---
+    let currentEventData = null;
+    let ticketQuantity = 1;
+    let basePrice = 0;
+
+    // --- MAIN ---
+    document.addEventListener('DOMContentLoaded', async function() {
       
-      let basePrice = 40000;
-      let quantity = 1;
-      
-      // Cek apakah ada data event dari localStorage
-      const selectedEventData = localStorage.getItem('selectedEvent');
-      if (selectedEventData) {
-        const eventData = JSON.parse(selectedEventData);
-        
-        // Update judul halaman
-        document.title = `Detail Event - ${eventData.title}`;
-        
-        // Update konten halaman
-        const eventTitle = document.querySelector('.event-title');
-        if (eventTitle) eventTitle.textContent = eventData.title;
-        
-        const eventSubtitle = document.querySelector('.event-subtitle');
-        if (eventSubtitle) eventSubtitle.textContent = eventData.description;
-        
-        // Update category tag
-        const categoryTag = document.querySelector('.tag.blue');
-        if (categoryTag) categoryTag.textContent = eventData.category;
-        
-        // Update tanggal dan waktu
-        const dateBlock = document.querySelectorAll('.info-block')[0];
-        if (dateBlock) {
-          const dateP = dateBlock.querySelector('p');
-          if (dateP) dateP.innerHTML = `${eventData.date} <br>${eventData.time}`;
-        }
-        
-        // Update lokasi
-        const locationBlock = document.querySelectorAll('.info-block')[1];
-        if (locationBlock) {
-          const locationP = locationBlock.querySelector('p');
-          if (locationP) locationP.innerHTML = `${eventData.location}<br>${eventData.address}`;
-        }
-        
-        // Update harga
-        basePrice = eventData.price || 40000;
-        const ticketPriceSpan = document.querySelector('.ticket-info span');
-        if (ticketPriceSpan) ticketPriceSpan.textContent = `IDR ${basePrice.toLocaleString('id-ID')}/pax`;
-        
-        // Update banner image jika ada
-        if (eventData.image) {
-          const bannerImg = document.querySelector('.event-banner img');
-          if (bannerImg) bannerImg.src = eventData.image;
-        }
-        
-        // Update about section
-        const aboutSection = document.querySelector('.about-event');
-        if (aboutSection) {
-          const aboutP = aboutSection.querySelectorAll('p');
-          if (aboutP[0]) aboutP[0].textContent = eventData.description;
-        }
-        
-        console.log('Event data loaded:', eventData);
+      // 1. Cek Login
+      if (!token) {
+        alert("Harap login terlebih dahulu.");
+        window.location.href = "login.html";
+        return;
       }
 
-      function updateBill() {
-        quantityEl.textContent = quantity;
-        
-        const total = basePrice * quantity;
-        
-        totalPriceEl.textContent = `IDR ${total.toLocaleString('id-ID')}`;
-        
-        totalLabelEl.textContent = `Total (${quantity} pax):`;
+      // 2. Ambil ID dari URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const eventId = urlParams.get('id');
+
+      if (!eventId) {
+        document.getElementById('loadingOverlay').innerHTML = `
+            <div style="text-align:center; color: #dc3545;">
+                <i class="fas fa-exclamation-circle fa-3x"></i><br><br>
+                <h3>ID Event Tidak Ditemukan</h3>
+                <p>Silakan pilih event dari Dashboard.</p>
+                <br>
+                <a href="dashboard_new.html" style="padding: 10px 20px; background: #4A90E2; color: white; text-decoration: none; border-radius: 5px;">Kembali ke Dashboard</a>
+            </div>
+        `;
+        return;
       }
-      
-      // Panggil updateBill setelah semua data dimuat
-      updateBill();
 
-      increaseBtn.addEventListener('click', function() {
-        quantity++;
-        updateBill();
-      });
+      // 3. Fetch Data API
+      await fetchEventDetail(eventId);
 
-      decreaseBtn.addEventListener('click', function() {
-        if (quantity > 1) {
-          quantity--;
-          updateBill();
-        }
-      });
-      
-      const pesanBtn = document.getElementById('pesanBtn');
-      pesanBtn.addEventListener('click', function () {
-        // Ambil data dari elemen yang ada
-        const eventTitle = document.querySelector('.event-title').textContent;
-        const locationBlock = document.querySelectorAll('.info-block')[1];
-        const locationName = locationBlock.querySelector('h4').nextElementSibling.querySelector('strong') 
-          ? locationBlock.querySelector('h4').nextElementSibling.textContent.split('\n')[0] 
-          : 'Jakarta Convention Center';
-        const locationAddress = locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1] 
-          ? locationBlock.querySelector('h4').nextElementSibling.innerHTML.split('<br>')[1].replace(/<[^>]*>/g, '').trim()
-          : 'Jl. Gatot Subroto, Jakarta Pusat';
-        const dateBlock = document.querySelectorAll('.info-block')[0];
-        const dateParts = dateBlock.querySelector('p').innerHTML.split('<br>');
-        const eventDate = `${dateParts[0].trim()} (${dateParts[1].trim()})`;
-        
-        const orderData = {
-          eventName: eventTitle,
-          quantity: quantity,
-          pricePerTicket: basePrice,
-          totalPrice: basePrice * quantity,
-          location: locationName,
-          address: locationAddress,
-          date: eventDate
-        };
-        localStorage.setItem('orderData', JSON.stringify(orderData));
-        
-        window.location.href = 'detail2.html';
-      });
+      // 4. Setup Tombol
+      setupEventListeners();
     });
+
+    // --- FETCH DATA ---
+    async function fetchEventDetail(id) {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/events/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401) {
+                alert("Sesi berakhir. Silakan login kembali.");
+                window.location.href = "login.html";
+                return;
+            }
+            if (!response.ok) throw new Error("Gagal mengambil data event.");
+
+            const result = await response.json();
+            currentEventData = result.data ? result.data : result;
+
+            renderEventUI(currentEventData);
+
+            // Tampilkan konten
+            document.getElementById('loadingOverlay').classList.add('hidden');
+            document.getElementById('mainContent').style.visibility = 'visible';
+
+        } catch (error) {
+            console.error(error);
+            alert("Terjadi kesalahan: " + error.message);
+            window.location.href = "dashboard_new.html";
+        }
+    }
+
+    // --- RENDER UI ---
+    function renderEventUI(event) {
+        basePrice = Number(event.price) || 0;
+
+        // 1. Gambar
+        const bannerImg = document.getElementById('eventBanner');
+        
+        if (event.image_url) {
+            const imgUrl = event.image_url.startsWith('http') 
+                ? event.image_url 
+                : `${API_BASE_URL}${event.image_url}`;
+            bannerImg.src = imgUrl;
+        } else {
+            bannerImg.src = 'tech.jpg';
+        }   
+
+        // 2. Teks Utama
+        document.title = `Detail - ${event.title}`;
+        setText('eventTitle', event.title);
+        setText('eventCategory', event.category?.name || 'Event');
+        setText('eventDescriptionShort', event.description ? event.description.substring(0, 150) + '...' : '');
+        setText('eventDescriptionFull', event.description || '-');
+        setText('eventBenefits', event.what_you_will_get || 'No specific benefits listed.');
+
+        // 3. Tanggal & Waktu
+        const start = new Date(event.start_date);
+        const end = new Date(event.end_date);
+        const dateStr = start.toLocaleDateString('id-ID', { weekday:'long', day: 'numeric', month: 'long', year: 'numeric' });
+        const timeStr = `${formatTime(start)} - ${formatTime(end)}`;
+        
+        const dateEl = document.getElementById('eventDateTime');
+        if(dateEl) dateEl.innerHTML = `${dateStr} <br> ${timeStr} WIB`;
+
+        // 4. Lokasi
+        const locEl = document.getElementById('eventLocation');
+        if(locEl) locEl.innerHTML = `<strong>${event.location || 'Online'}</strong><br>${event.address || ''}`;
+
+        // 5. Organizer
+        if (event.organizer) {
+            setText('organizerName', event.organizer.username || event.organizer.name);
+            setText('organizerEmail', event.organizer.email);
+        }
+
+        // 6. Kuota
+        const current = event.current_participants || 0;
+        const max = event.max_participants || 100;
+        const percent = Math.min((current / max) * 100, 100);
+        
+        setText('eventQuotaInfo', `${current} / ${max} registered`);
+        document.getElementById('quotaProgress').style.width = `${percent}%`;
+
+        // Status Badge
+        const statusBadge = document.getElementById('eventStatus');
+        if (current >= max) {
+            statusBadge.textContent = "Sold Out";
+            statusBadge.style.backgroundColor = "#e74c3c";
+            
+            const btn = document.getElementById('pesanBtn');
+            btn.disabled = true;
+            btn.textContent = "Tiket Habis";
+            btn.style.backgroundColor = "#ccc";
+            btn.style.cursor = "not-allowed";
+        } else {
+            statusBadge.textContent = "Available";
+        }
+
+        updateBill();
+    }
+
+    // --- UPDATE HARGA ---
+    function updateBill() {
+        const total = basePrice * ticketQuantity;
+        setText('quantity', ticketQuantity);
+        setText('priceDisplay', formatRupiah(basePrice) + '/pax');
+        setText('total-price', formatRupiah(total));
+        setText('total-label', `Total (${ticketQuantity} pax):`);
+    }
+
+    function setupEventListeners() {
+        document.getElementById('decrease').addEventListener('click', () => {
+            if (ticketQuantity > 1) {
+                ticketQuantity--;
+                updateBill();
+            }
+        });
+
+        document.getElementById('increase').addEventListener('click', () => {
+            if (currentEventData) {
+                const sisa = (currentEventData.max_participants || 100) - (currentEventData.current_participants || 0);
+                if (ticketQuantity < sisa) {
+                    ticketQuantity++;
+                    updateBill();
+                } else {
+                    alert(`Maaf, tiket tersisa hanya ${sisa}.`);
+                }
+            }
+        });
+
+        document.getElementById('pesanBtn').addEventListener('click', () => {
+            if (!currentEventData || document.getElementById('pesanBtn').disabled) return;
+
+            const orderData = {
+                eventId: currentEventData.id,
+                eventName: currentEventData.title,
+                quantity: ticketQuantity,
+                pricePerTicket: basePrice,
+                totalPrice: basePrice * ticketQuantity,
+                date: document.getElementById('eventDateTime')?.innerText.replace(/\n/g, ' ') || '',
+                location: currentEventData.location,
+                address: currentEventData.address,
+                image: document.getElementById('eventBanner')?.src
+            };
+
+            localStorage.setItem('orderData', JSON.stringify(orderData));
+            window.location.href = 'detail2.html';
+        });
+    }
+
+    // --- HELPER ---
+    function setText(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+    }
+    function formatTime(d) {
+        return d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
+    }
+    function formatRupiah(n) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+    }
   </script>
 
 </body>

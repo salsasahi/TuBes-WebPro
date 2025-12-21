@@ -33,11 +33,32 @@
         <button class="icon-btn">
           <i class="fas fa-bell"></i>
         </button>
-        <div class="user-avatar">
-          <img
-            src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
-            alt="User"
-          />
+        <div class="user-avatar-container">
+          <div class="user-avatar" id="userAvatar">
+            <img
+              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+              alt="User"
+            />
+          </div>
+          <!-- Dropdown Menu -->
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="dropdown-header">
+              <img
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+                alt="User"
+                class="dropdown-avatar"
+              />
+              <div class="dropdown-user-info">
+                <span class="dropdown-username">Sarah</span>
+                <span class="dropdown-email">sarah@example.com</span>
+              </div>
+            </div>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item logout-btn" id="logoutBtn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
@@ -427,6 +448,34 @@
       const notificationBtn = document.querySelector(".icon-btn");
       notificationBtn.addEventListener("click", () => {
         alert("You have 3 new notifications!");
+      });
+
+      // Profile Dropdown Toggle
+      const userAvatar = document.getElementById("userAvatar");
+      const profileDropdown = document.getElementById("profileDropdown");
+      const logoutBtn = document.getElementById("logoutBtn");
+
+      userAvatar.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle("show");
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!profileDropdown.contains(e.target) && !userAvatar.contains(e.target)) {
+          profileDropdown.classList.remove("show");
+        }
+      });
+
+      // Logout functionality
+      logoutBtn.addEventListener("click", () => {
+        if (confirm("Apakah Anda yakin ingin logout?")) {
+          // Clear user data from localStorage
+          localStorage.removeItem("userData");
+          localStorage.removeItem("isLoggedIn");
+          // Redirect to login page
+          window.location.href = "login.html";
+        }
       });
 
       // Isolasi scroll pada Recommended Events Section

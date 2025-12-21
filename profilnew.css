@@ -67,10 +67,6 @@ html {
   color: #1d4ed8;
 }
 
-.nav {
-  display: flex;
-  gap: 2rem;
-}
 
 .nav-link {
   text-decoration: none;

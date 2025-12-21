@@ -288,13 +288,15 @@
           eventCards.forEach((card) => {
             const cardDate = new Date(card.dataset.date);
             cardDate.setHours(0, 0, 0, 0);
+            const statusBadge = card.querySelector(".status-badge");
+            const isCompleted = statusBadge && statusBadge.classList.contains("completed");
 
             if (tab === "all") {
               card.style.display = "flex";
             } else if (tab === "upcoming") {
               card.style.display = cardDate >= today ? "flex" : "none";
             } else if (tab === "past") {
-              card.style.display = cardDate < today ? "flex" : "none";
+              card.style.display = isCompleted ? "flex" : "none";
             }
           });
         });

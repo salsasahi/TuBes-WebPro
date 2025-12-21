@@ -38,61 +38,111 @@
         <input type="password" id="confirmPassword" placeholder="Confirm your password" required>
       </div>
 
-      <button type="submit" class="btn"><i class="fa-solid fa-user-plus"></i> Sign Up</button>
+      <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-user-plus"></i> Sign Up</button>
     </form>
 
     <p class="signup-text">Already have an account? <a href="login.html">Sign in</a></p>
   </div>
 
   <script>
-    // Form validation and redirect
+    // Base URL sesuai Open API Spec
+    const API_URL = "http://127.0.0.1:8000/api";
+
     const signupForm = document.getElementById("signupForm");
-    signupForm.addEventListener("submit", (e) => {
+    const submitBtn = document.getElementById("submitBtn");
+
+    signupForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       
+      // Reset state tombol
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+      submitBtn.disabled = true;
+
       const email = document.getElementById("email").value;
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirmPassword").value;
       
-      // Validasi email format
+      // --- VALIDASI CLIENT SIDE ---
+      
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         alert("Format email tidak valid!");
+        resetBtn();
         return;
       }
       
-      // Validasi username minimal 3 karakter
       if (username.length < 3) {
         alert("Username minimal 3 karakter!");
+        resetBtn();
         return;
       }
       
-      // Validasi password minimal 6 karakter
       if (password.length < 6) {
         alert("Password minimal 6 karakter!");
+        resetBtn();
         return;
       }
       
-      // Validasi password match
       if (password !== confirmPassword) {
         alert("Password dan Confirm Password tidak sama!");
+        resetBtn();
         return;
       }
-      
-      // Simpan data user ke localStorage
-      const userData = {
-        email: email,
-        username: username,
-        password: password
-      };
-      localStorage.setItem("userData", JSON.stringify(userData));
-      
-      // Simulasi signup berhasil
-      alert("Registrasi berhasil! Silakan login dengan akun Anda");
-      
-      // Redirect ke login.html
-      window.location.href = "login.html";
+
+      // --- INTEGRASI KE API ---
+
+      try {
+        // Persiapan payload sesuai spec API (perhatikan key 'password_confirmation')
+        const payload = {
+            username: username,
+            email: email,
+            password: password,
+            password_confirmation: confirmPassword 
+        };
+
+        // Melakukan request POST ke endpoint /register
+        const response = await fetch(`${API_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json' // Penting agar return error berupa JSON
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            // Jika sukses (Status 200/201)
+            alert("Registrasi berhasil! Silakan login dengan akun Anda.");
+            window.location.href = "login.html";
+        } else {
+            // Jika gagal (Status 400, 422, 500)
+            // Menampilkan pesan error spesifik dari backend jika ada
+            let errorMessage = result.message || "Registrasi gagal.";
+            
+            // Jika ada error validasi detail (biasanya dari Laravel)
+            if (result.errors) {
+                const firstError = Object.values(result.errors)[0][0];
+                errorMessage = firstError;
+            }
+            
+            alert(errorMessage);
+        }
+
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan koneksi ke server.");
+      } finally {
+        resetBtn();
+      }
+
+      function resetBtn() {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+      }
     });
   </script>
 </body>

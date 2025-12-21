@@ -27,65 +27,100 @@
         <i class="fa-solid fa-eye-slash toggle-password"></i>
       </div>
 
-      <button type="submit" class="btn"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
+      <button type="submit" class="btn" id="submitBtn"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
     </form>
 
     <p class="signup-text">Don’t have an account? <a href="signup.html">Sign up</a></p>
   </div>
 
   <script>
+    // --- SETUP DASAR ---
+    const API_URL = "http://127.0.0.1:8000/api";
+    const loginForm = document.getElementById("loginForm");
+    const submitBtn = document.getElementById("submitBtn");
+
     // Toggle show/hide password
     const toggle = document.querySelector(".toggle-password");
-    const password = document.querySelector("input[type='password']");
+    const passwordInput = document.getElementById("password");
     
     toggle.addEventListener("click", () => {
-      if (password.type === "password") {
-        password.type = "text";
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
         toggle.classList.replace("fa-eye-slash", "fa-eye");
       } else {
-        password.type = "password";
+        passwordInput.type = "password";
         toggle.classList.replace("fa-eye", "fa-eye-slash");
       }
     });
 
-    // Login Logic
-    const loginForm = document.getElementById("loginForm");
-    loginForm.addEventListener("submit", (e) => {
+    // --- LOGIKA LOGIN API ---
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       
+      // UI Loading State
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing In...';
+      submitBtn.disabled = true;
+
       const email = document.getElementById("email").value;
-      const passwordValue = document.getElementById("password").value;
+      const password = document.getElementById("password").value;
 
-      // Admin Hardcode
-      if (email === "admin@example.com" && passwordValue === "admin123") {
-        alert("Login Admin berhasil!");
-        window.location.href = "EO.html";
-        return;
-      }
+      try {
+        const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
 
-      // Data user dari signup
-      const userData = localStorage.getItem("userData");
-      
-      if (!userData) {
-        alert("Akun tidak ditemukan! Silakan daftar terlebih dahulu");
-        window.location.href = "signup.html";
-        return;
-      }
-      
-      const user = JSON.parse(userData);
+        const result = await response.json();
 
-      // Validasi login user biasa
-      if (email === user.email && passwordValue === user.password) {
-        alert("Login berhasil! Selamat datang " + user.username);
+        if (response.ok) {
+            // LOGIN SUKSES
+            
+            // 1. Simpan Token (PENTING untuk Bearer Auth nanti)
+            // Asumsi: Backend mengembalikan key bernama 'access_token' atau 'token'
+            // Sesuaikan 'access_token' di bawah dengan response aktual backendmu
+            const token = result.access_token || result.token; 
+            localStorage.setItem("authToken", token);
+            
+            // 2. Simpan Data User (Opsional, untuk tampilan nama di dashboard)
+            if (result.user) {
+                localStorage.setItem("userData", JSON.stringify(result.user));
+            }
 
-        // Simpan status login
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("currentUser", user.username);
+            // 3. Simpan status login
+            localStorage.setItem("isLoggedIn", "true");
 
-        // Redirect user normal
-        window.location.href = "dashboard_new.html";
-      } else {
-        alert("Email atau password salah!");
+            alert("Login berhasil!");
+
+            // 4. Redirect Logic
+            // Jika backend mengirimkan role, kita bisa redirect berdasarkan role
+            // Contoh implementasi sederhana:
+            if (result.user && result.user.role === 'admin') {
+                window.location.href = "EO.html";
+            } else {
+                window.location.href = "dashboard_new.html";
+            }
+
+        } else {
+            // LOGIN GAGAL (401 Unauthorized, dll)
+            console.error("Login failed:", result);
+            alert(result.message || "Email atau password salah!");
+        }
+
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Terjadi kesalahan koneksi ke server.");
+      } finally {
+        // Reset tombol kembali normal
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
       }
     });
   </script>

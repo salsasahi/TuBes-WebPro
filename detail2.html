@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Konfirmasi Pemesanan</title>
     <link rel="stylesheet" href="style-detail2.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
-    
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
     <style>
       .btn-pesan:disabled { background-color: #ccc; cursor: not-allowed; }
       .loading-spinner {
@@ -100,25 +102,23 @@
           </div>
         </div>
 
-        <button class="btn-pesan" id="submitBtn">Bayar Sekarang</button>
+        <button class="btn-pesan" id="submitBtn">Pesan</button>
       </section>
     </main>
 
     <script>
-      // --- CONFIG API ---
       const API_BASE_URL = 'http://127.0.0.1:8000';
       const token = localStorage.getItem('authToken');
       const userDataStr = localStorage.getItem('userData');
 
       document.addEventListener('DOMContentLoaded', function() {
-        // 1. Cek Login
         if (!token) {
           alert("Anda harus login untuk memesan.");
           window.location.href = "login.html";
           return;
         }
 
-        // 2. Prefill Data User
+        // Prefill Form dari Data User Login
         if (userDataStr) {
             try {
                 const user = JSON.parse(userDataStr);
@@ -128,7 +128,7 @@
             } catch (e) {}
         }
 
-        // 3. Ambil Data dari LocalStorage (Halaman sebelumnya)
+        // Ambil Data Event dari LocalStorage (Diset saat klik di Dashboard)
         const orderDataStr = localStorage.getItem('orderData');
         if (!orderDataStr) {
             alert("Data pemesanan tidak ditemukan.");
@@ -139,14 +139,13 @@
         const data = JSON.parse(orderDataStr);
         renderOrderDetails(data);
 
-        // 4. Listener Tombol Pesan
+        // Listener Tombol Pesan
         document.getElementById('submitBtn').addEventListener('click', function(e) {
             e.preventDefault();
             submitBooking(data);
         });
       });
 
-      // --- RENDER UI ---
       function renderOrderDetails(data) {
           document.getElementById('eventName').textContent = data.eventName;
           document.getElementById('eventLocationDisplay').innerHTML = `
@@ -165,7 +164,7 @@
           document.getElementById('totalAmountDisplay').textContent = `IDR ${totalWithFee.toLocaleString('id-ID')}`;
       }
 
-      // --- LOGIKA PEMBAYARAN (2 STEP) ---
+      // --- LOGIKA UTAMA FETCHING API (2 STEP) ---
       async function submitBooking(orderData) {
           const btn = document.getElementById('submitBtn');
           const nama = document.getElementById('inputName').value.trim();
@@ -178,7 +177,7 @@
             return;
           }
 
-          // PAYLOAD (Sesuaikan dengan BookingController Anda)
+          // Payload disesuaikan dengan BookingController Laravel Anda
           const payload = {
               event_id: parseInt(orderData.eventId),
               quantity: parseInt(orderData.quantity),
@@ -189,13 +188,12 @@
           };
 
           try {
-              // Start Loading
+              // 1. UI Loading State
               btn.disabled = true;
-              btn.innerHTML = `<span class="loading-spinner"></span> Memproses...`;
+              btn.innerHTML = `<span class="loading-spinner"></span> Membuat Pesanan...`;
 
-              // STEP 1: CREATE BOOKING
-              console.log("Creating Booking...");
-              const bookingRes = await fetch(`${API_BASE_URL}/api/bookings`, {
+              // 2. Request PERTAMA: Buat Booking (POST /api/bookings)
+              const response = await fetch(`${API_BASE_URL}/api/bookings`, {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -205,27 +203,28 @@
                   body: JSON.stringify(payload)
               });
 
-              const bookingResult = await bookingRes.json();
+              const result = await response.json();
 
-              if (!bookingRes.ok) {
-                  // Handle Validasi Error
-                  let errorMsg = bookingResult.message || "Gagal membuat pesanan.";
-                  if (bookingResult.errors) {
-                      errorMsg += "\n" + Object.values(bookingResult.errors).map(e => `- ${e[0]}`).join("\n");
+              if (!response.ok) {
+                  // Handle Error Validasi dari Laravel
+                  let errMsg = result.message || "Gagal membuat pesanan.";
+                  if (result.errors) {
+                      errMsg += "\n" + Object.values(result.errors).map(e => `- ${e[0]}`).join("\n");
                   }
-                  throw new Error(errorMsg);
+                  throw new Error(errMsg);
               }
 
-              // Ambil ID Booking Baru
-              const bookingId = bookingResult.data?.id || bookingResult.data?.booking?.id;
+              // Ambil ID Booking dari response
+              const bookingId = result.data?.id || result.data?.booking?.id;
               
-              if (!bookingId) throw new Error("ID Booking tidak ditemukan.");
+              if (!bookingId) {
+                  throw new Error("ID Booking tidak ditemukan. Cek respon server.");
+              }
 
-              // STEP 2: GET PAYMENT LINK (Request ke endpoint /pay)
-              console.log("Getting Payment Link...");
+              // 3. Request KEDUA: Minta Link Bayar (POST /api/bookings/{id}/pay)
               btn.innerHTML = `<span class="loading-spinner"></span> Menyiapkan Pembayaran...`;
-
-              const payRes = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/pay`, {
+              
+              const payResponse = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/pay`, {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -234,29 +233,35 @@
                   }
               });
 
-              const payResult = await payRes.json();
+              const payResult = await payResponse.json();
 
-              if (!payRes.ok) throw new Error(payResult.message || "Gagal mengambil link pembayaran.");
+              if (!payResponse.ok) {
+                  throw new Error(payResult.message || "Gagal request ke Midtrans.");
+              }
 
-              // Ambil URL Redirect
-              const paymentUrl = payResult.links?.redirect_to_payment;
+              // 4. Ambil Link & Redirect
+              let paymentUrl = null;
+              if (payResult.links && payResult.links.redirect_to_payment) {
+                  paymentUrl = payResult.links.redirect_to_payment;
+              } else if (payResult.data && payResult.data.transaction && payResult.data.transaction.payment_url) {
+                  paymentUrl = payResult.data.transaction.payment_url;
+              }
 
               if (paymentUrl) {
-                  // SUKSES! Redirect ke Midtrans
-                  localStorage.removeItem('orderData');
-                  localStorage.setItem('last_booking_id', bookingId);
-                  
-                  window.location.href = paymentUrl; 
+                  alert(`Pesanan berhasil! Mengarahkan ke pembayaran...`);
+                  localStorage.removeItem('orderData'); // Bersihkan cart
+                  window.location.href = paymentUrl;    // Redirect ke Midtrans
               } else {
-                  throw new Error("Link pembayaran tidak ditemukan di respon server.");
+                  throw new Error("Link pembayaran tidak ditemukan.");
               }
 
           } catch (error) {
               alert(error.message);
               console.error(error);
           } finally {
+              // Reset Tombol
               btn.disabled = false;
-              btn.innerHTML = 'Bayar Sekarang';
+              btn.innerHTML = 'Pesan';
           }
       }
     </script>

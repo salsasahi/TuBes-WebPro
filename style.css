@@ -247,16 +247,25 @@ body {
   display: flex;
   flex-direction: column;
   transition: 0.3s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .event-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+  z-index: 2;
 }
 
 .event-card img {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover img {
+  transform: scale(1.1); 
 }
 
 /* Isi Kartu */

@@ -261,6 +261,11 @@ body {
   width: 100%;
   height: 180px;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.event-card:hover img {
+  transform: scale(1.1); 
 }
 
 /* Isi Kartu */

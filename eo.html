@@ -11,7 +11,6 @@
 <body>
 
   <div class="d-flex">
-    <!-- Sidebar -->
     <aside class="sidebar d-flex flex-column justify-content-between p-3">
       <div>
         <h5 class="text-white fw-bold mb-4"><i class="bi bi-calendar-event me-2"></i>Event Admin</h5>
@@ -38,7 +37,6 @@
       </div>
     </aside>
 
-    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -57,9 +55,7 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <main class="main-content flex-grow-1 p-4 bg-light">
-      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h5 class="fw-semibold">Dashboard Overview</h5>
@@ -68,7 +64,6 @@
         <a href="tambah-event.html"><button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Event</button> </a>
       </div>
 
-      <!-- Stats Cards -->
       <div class="row g-3 mb-4">
         <div class="col-md-3">
           <div class="card shadow-sm border-0">
@@ -108,14 +103,12 @@
         </div>
       </div>
 
-      <!-- Recent Events Table -->
       <div class="card shadow-sm border-0">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-semibold mb-0">Recent Events</h6>
             <div class="input-group w-auto">
               <input type="text" class="form-control form-control-sm" placeholder="Search events..." />
-
             </div>
           </div>
 
@@ -134,15 +127,17 @@
                 <tr>
                   <td>
                     <div>
-                      <h6 class="mb-0 fw-semibold">Tech Conference 2024</h6>
-                      <small class="text-muted">Technology</small>
+                      <h6 id="targetNama" class="mb-0 fw-semibold">Tech Conference 2024</h6>
+                      <small id="targetKategori" class="text-muted">Technology</small>
                     </div>
                   </td>
-                  <td>Dec 15, 2024</td>
-                  <td>245/300</td>
-                  <td><span class="badge bg-success">Active</span></td>
+                  <td id="targetTanggal">Dec 15, 2024</td>
+                  <td id="targetKuota">245/300</td>
+                  <td><span id="targetStatus" class="badge bg-success">Active</span></td>
                   <td>
-                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    <a href="edit-event.html" class="text-decoration-none">
+                      <i class="bi bi-pencil-square text-primary me-2"></i>
+                    </a>
                     <i class="bi bi-trash text-danger"></i>
                   </td>
                 </tr>
@@ -158,7 +153,9 @@
                   <td>89/150</td>
                   <td><span class="badge bg-warning text-dark">Upcoming</span></td>
                   <td>
-                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    <a href="edit-event.html" class="text-decoration-none">
+                      <i class="bi bi-pencil-square text-primary me-2"></i>
+                    </a>
                     <i class="bi bi-trash text-danger"></i>
                   </td>
                 </tr>
@@ -174,7 +171,9 @@
                   <td>120/120</td>
                   <td><span class="badge bg-secondary">Completed</span></td>
                   <td>
-                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    <a href="edit-event.html" class="text-decoration-none">
+                      <i class="bi bi-pencil-square text-primary me-2"></i>
+                    </a>
                     <i class="bi bi-trash text-danger"></i>
                   </td>
                 </tr>
@@ -182,7 +181,6 @@
             </table>
           </div>
 
-          <!-- Pagination -->
           <div class="d-flex justify-content-between align-items-center mt-3">
             <small class="text-muted">Showing 1 to 3 of 24 results</small>
             <nav>
@@ -202,13 +200,45 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Logout functionality
+    window.addEventListener('DOMContentLoaded', () => {
+      const dataSatu = localStorage.getItem('dataEventTerbaru');
+
+      if (dataSatu) {
+        const data = JSON.parse(dataSatu);
+
+        const formatTanggalTeks = (dateString) => {
+          if (!dateString) return "";
+          const opsi = { month: 'short', day: 'numeric', year: 'numeric' };
+          const date = new Date(dateString);
+          return date.toLocaleDateString('en-US', opsi); 
+        };
+
+        if(document.getElementById('targetNama')) document.getElementById('targetNama').innerText = data.nama;
+        if(document.getElementById('targetKategori')) document.getElementById('targetKategori').innerText = data.kategori;
+        
+        if(document.getElementById('targetTanggal')) {
+          document.getElementById('targetTanggal').innerText = formatTanggalTeks(data.tanggal);
+        }
+        
+        if(document.getElementById('targetKuota')) document.getElementById('targetKuota').innerText = "245/" + data.kuota;
+        
+        const statusBadge = document.getElementById('targetStatus');
+        if(statusBadge) {
+          statusBadge.innerText = data.status;
+          if (data.status === 'Completed') {
+              statusBadge.className = "badge bg-secondary";
+          } else if (data.status === 'Upcoming') {
+              statusBadge.className = "badge bg-warning text-dark";
+          } else {
+              statusBadge.className = "badge bg-success";
+          }
+        }
+      }
+    });
+
     document.getElementById('confirmLogout').addEventListener('click', function() {
-      // Clear any login session data
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('currentUser');
-      
-      // Redirect to login page
       window.location.href = 'login.html';
     });
   </script>

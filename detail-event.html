@@ -149,14 +149,12 @@
     // --- MAIN ---
     document.addEventListener('DOMContentLoaded', async function() {
       
-      // 1. Cek Login
       if (!token) {
         alert("Harap login terlebih dahulu.");
         window.location.href = "login.html";
         return;
       }
 
-      // 2. Ambil ID dari URL
       const urlParams = new URLSearchParams(window.location.search);
       const eventId = urlParams.get('id');
 
@@ -173,10 +171,8 @@
         return;
       }
 
-      // 3. Fetch Data API
       await fetchEventDetail(eventId);
 
-      // 4. Setup Tombol
       setupEventListeners();
     });
 

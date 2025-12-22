@@ -9,15 +9,30 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+    <style>
+        /* CSS Tambahan untuk Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            width: 100%;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-style: italic;
+            width: 100%;
+        }
+    </style>
   </head>
   <body>
-    <!-- Header -->
     <header class="header">
       <div class="header-left">
         <div class="logo">
           <a href="dashboard_new.html" class="logo">
            <div class="logo-icon">
-              <img src="logoEvent.jpg" alt="EventKu Logo" />
+              <img src="logoEvent.jpg" alt="EventKu" onerror="this.style.display='none'"/> 
               <h1 class="logo-text">EventKu</h1>
             </div>
           </a>
@@ -30,8 +45,9 @@
         <div class="user-avatar-container">
           <div class="user-avatar" id="userAvatar">
             <img
-              src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop"
+              src="https://ui-avatars.com/api/?name=User&background=random"
               alt="User"
+              id="userAvatarImg"
             />
           </div>
           <div class="logout-popup" id="logoutPopup">
@@ -44,17 +60,14 @@
       </div>
     </header>
 
-    <!-- Main Content -->
     <main class="main-content">
-      <!-- Welcome Section -->
       <section class="welcome-section">
-        <h1 class="welcome-title">Welcome back, Sarah!</h1>
+        <h1 class="welcome-title" id="welcomeText">Welcome back!</h1>
         <p class="welcome-subtitle">
           Manage your events and discover new opportunities
         </p>
       </section>
 
-      <!-- Event Summary Cards -->
       <section class="summary-cards">
         <div class="summary-card">
           <div class="summary-icon blue">
@@ -62,7 +75,7 @@
           </div>
           <div class="summary-content">
             <p class="summary-label">Total Events</p>
-            <h2 class="summary-number">24</h2>
+            <h2 class="summary-number" id="statTotal">0</h2>
           </div>
         </div>
         <div class="summary-card">
@@ -71,7 +84,7 @@
           </div>
           <div class="summary-content">
             <p class="summary-label">Upcoming</p>
-            <h2 class="summary-number">8</h2>
+            <h2 class="summary-number" id="statUpcoming">0</h2>
           </div>
         </div>
         <div class="summary-card">
@@ -80,403 +93,322 @@
           </div>
           <div class="summary-content">
             <p class="summary-label">Completed</p>
-            <h2 class="summary-number">16</h2>
+            <h2 class="summary-number" id="statCompleted">0</h2>
           </div>
         </div>
       </section>
 
-      <!-- Search and Filter Bar -->
       <section class="search-filter-section">
         <div class="search-box">
           <i class="fas fa-search"></i>
-          <input type="text" placeholder="Search events..." id="searchInput" />
+          <input type="text" placeholder="Search my events..." id="searchInput" />
         </div>
-        <div class="filter-group">
-          <select class="filter-select" id="categoryFilter">
-            <option>All Categories</option>
-            <option>Technology</option>
-            <option>Marketing</option>
-            <option>Design</option>
-            <option>Business</option>
-          </select>
-          
-          <button class="filter-btn">
-            <i class="fas fa-filter"></i>
-          </button>
-        </div>
-      </section>
+        </section>
 
-      <!-- Events Container (My Events + Recommended) -->
       <div class="events-container">
-        <!-- My Events Section -->
         <section id="my-events" class="my-events-section">
           <div class="section-header">
             <h2 class="section-title">My Events</h2>
             <div class="tabs">
               <button class="tab-btn active" data-tab="all">All</button>
+              <button class="tab-btn" data-tab="upcoming">Upcoming</button>
               <button class="tab-btn" data-tab="past">Past</button>
             </div>
           </div>
 
-          <div class="events-list" id="eventsList">
-            <!-- Event Card 1 -->
-            <div
-              class="event-card"
-              data-status="registered"
-              data-date="2024-03-15"
-            >
-              <div class="event-date blue">
-                <span class="date-month">MAR</span>
-                <span class="date-day">15</span>
-              </div>
-              <div class="event-content">
-                <h3 class="event-title">Web Development Workshop</h3>
-                <p class="event-description">
-                  Learn modern web development techniques with React and Node.js
-                </p>
-                <div class="event-details">
-                  <span class="detail-item">
-                    <i class="fas fa-clock"></i>
-                    9:00 AM - 4:00 PM
-                  </span>
-                  <span class="detail-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Online
-                  </span>
-                </div>
-                <div class="event-footer">
-                  <span class="status-badge registered">Registered</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Event Card 2 -->
-            <div
-              class="event-card"
-              data-status="pending"
-              data-date="2024-03-22"
-            >
-              <div class="event-date purple">
-                <span class="date-month">MAR</span>
-                <span class="date-day">22</span>
-              </div>
-              <div class="event-content">
-                <h3 class="event-title">Digital Marketing Summit</h3>
-                <p class="event-description">
-                  Explore the latest trends in digital marketing and social
-                  media
-                </p>
-                <div class="event-details">
-                  <span class="detail-item">
-                    <i class="fas fa-clock"></i>
-                    9:00 AM - 5:00 PM
-                  </span>
-                  <span class="detail-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Jakarta Convention Center
-                  </span>
-                </div>
-                <div class="event-footer">
-                  <span class="status-badge completed">Completed</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Event Card 3 -->
-            <div
-              class="event-card"
-              data-status="completed"
-              data-date="2024-02-28"
-            >
-              <div class="event-date green">
-                <span class="date-month">FEB</span>
-                <span class="date-day">28</span>
-              </div>
-              <div class="event-content">
-                <h3 class="event-title">UI/UX Design Masterclass</h3>
-                <p class="event-description">
-                  Master the fundamentals of user interface and experience
-                  design
-                </p>
-                <div class="event-details">
-                  <span class="detail-item">
-                    <i class="fas fa-clock"></i>
-                    1:00 PM - 6:00 PM
-                  </span>
-                  <span class="detail-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    Online
-                  </span>
-                </div>
-                <div class="event-footer">
-                  <span class="status-badge completed">Completed</span>
-                </div>
-              </div>
-            </div>
+          <div class="events-list" id="myEventsList">
+             <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Memuat history event...</div>
           </div>
         </section>
 
-        <!-- Recommended Events Section -->
         <section class="recommended-section">
           <h2 class="section-title">Event Terbaru</h2>
-          <div class="recommended-list">
-            <!-- Recommended Event 1 -->
-            <div class="recommended-card">
-              <div class="recommended-image">
-                <img
-                  src="tech.jpg"
-                  alt="Tech Innovation Conference"
-                />
-              </div>
-              <div class="recommended-content">
-                <h3 class="recommended-title">Tech Innovation Conference</h3>
-                <p class="recommended-details">April 5, 2024 • Online</p>
-                <button class="register-btn">Register Now</button>
-              </div>
-            </div>
-
-            <!-- Recommended Event 2 -->
-            <div class="recommended-card">
-              <div class="recommended-image">
-                <img
-                  src="https://images.unsplash.com/photo-1511578314322-379afb476865?w=400&h=250&fit=crop"
-                  alt="Leadership Workshop"
-                />
-              </div>
-              <div class="recommended-content">
-                <h3 class="recommended-title">Leadership Workshop</h3>
-                <p class="recommended-details">April 12, 2024 • Surabaya</p>
-                <button class="register-btn">Register Now</button>
-              </div>
-            </div>
-
-            <!-- Recommended Event 3 -->
-            <div class="recommended-card">
-              <div class="recommended-image">
-                <img
-                  src="https://images.unsplash.com/photo-1586717791821-3f44a563fa4c?w=400&h=250&fit=crop"
-                  alt="Creative Design Workshop"
-                />
-              </div>
-              <div class="recommended-content">
-                <h3 class="recommended-title">Creative Design Workshop</h3>
-                <p class="recommended-details">April 18, 2024 • Bandung</p>
-                <button class="register-btn">Register Now</button>
-              </div>
-            </div>
+          <div class="recommended-list" id="recommendedList">
+             <div class="loading-state"><i class="fas fa-spinner fa-spin"></i> Memuat rekomendasi...</div>
           </div>
         </section>
       </div>
     </main>
 
     <script>
-      // Tab Navigation
-      const tabButtons = document.querySelectorAll(".tab-btn");
-      const eventCards = document.querySelectorAll(".event-card");
+      // --- KONFIGURASI API ---
+      const API_BASE_URL = 'http://127.0.0.1:8000';
+      const token = localStorage.getItem('authToken');
+      const userDataStr = localStorage.getItem('userData');
+      
+      // Global variables untuk menyimpan data agar tidak perlu fetch ulang saat ganti tab
+      let allMyBookings = []; 
 
-      tabButtons.forEach((btn) => {
-        btn.addEventListener("click", () => {
-          // Remove active class from all tabs
-          tabButtons.forEach((b) => b.classList.remove("active"));
-          // Add active class to clicked tab
-          btn.classList.add("active");
+      // --- CEK LOGIN & USER DATA ---
+      if (!token) {
+        alert("Anda belum login.");
+        window.location.href = "login.html";
+      }
 
-          const tab = btn.dataset.tab;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
+      if (userDataStr) {
+          try {
+              const user = JSON.parse(userDataStr);
+              // Update Nama di Welcome Header
+              document.getElementById('welcomeText').textContent = `Welcome back, ${user.username || 'User'}!`;
+              // Update Avatar dengan inisial
+              const avatarUrl = `https://ui-avatars.com/api/?name=${user.username || 'User'}&background=0D8ABC&color=fff`;
+              const avatarImg = document.getElementById('userAvatarImg');
+              if(avatarImg) avatarImg.src = avatarUrl;
+          } catch (e) { console.error(e); }
+      }
 
-          eventCards.forEach((card) => {
-            const cardDate = new Date(card.dataset.date);
-            cardDate.setHours(0, 0, 0, 0);
-            const statusBadge = card.querySelector(".status-badge");
-            const isCompleted = statusBadge && statusBadge.classList.contains("completed");
+      // --- 1. FETCH MY BOOKINGS (API: /api/my-bookings) ---
+      async function fetchMyBookings() {
+          const container = document.getElementById('myEventsList');
+          
+          try {
+              const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
+                  method: 'GET',
+                  headers: {
+                      'Accept': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  }
+              });
 
-            if (tab === "all") {
-              card.style.display = "flex";
-            } else if (tab === "upcoming") {
-              card.style.display = cardDate >= today ? "flex" : "none";
-            } else if (tab === "past") {
-              card.style.display = isCompleted ? "flex" : "none";
-            }
+              if (response.status === 401) {
+                  handleLogout("Sesi berakhir.");
+                  return;
+              }
+
+              const result = await response.json();
+              
+              // Normalisasi data (handle structure {data: []} atau [])
+              let bookings = [];
+              if (result.data && Array.isArray(result.data)) bookings = result.data;
+              else if (Array.isArray(result)) bookings = result;
+
+              allMyBookings = bookings; // Simpan di global var untuk filtering tab
+              
+              calculateStats(bookings); // Hitung statistik
+              renderMyEvents(bookings); // Render ke HTML
+
+          } catch (error) {
+              console.error("Error fetching bookings:", error);
+              container.innerHTML = `<div class="empty-state">Gagal memuat data event saya.</div>`;
+          }
+      }
+
+      // --- 2. CALCULATE STATS ---
+      function calculateStats(bookings) {
+          const now = new Date();
+          let upcoming = 0;
+          let completed = 0;
+
+          bookings.forEach(booking => {
+              // Asumsi structure: booking.event.start_date
+              // Jika booking langsung berisi data event, sesuaikan path-nya
+              const eventDate = booking.event ? new Date(booking.event.start_date) : new Date();
+              
+              if (eventDate >= now) {
+                  upcoming++;
+              } else {
+                  completed++;
+              }
           });
-        });
+
+          // Update UI
+          document.getElementById('statTotal').innerText = bookings.length;
+          document.getElementById('statUpcoming').innerText = upcoming;
+          document.getElementById('statCompleted').innerText = completed;
+      }
+
+      // --- 3. RENDER MY EVENTS ---
+      function renderMyEvents(bookings) {
+          const container = document.getElementById('myEventsList');
+          container.innerHTML = '';
+
+          if (bookings.length === 0) {
+              container.innerHTML = `<div class="empty-state">Anda belum mengikuti event apapun.</div>`;
+              return;
+          }
+
+          bookings.forEach(booking => {
+              // Extract data event dari booking object
+              // Struktur tergantung backend, biasanya { id:..., event: { ... } } atau flat
+              const event = booking.event || booking; 
+              
+              const title = event.title || 'No Title';
+              const dateObj = new Date(event.start_date);
+              
+              // Format Tanggal: MAR 15
+              const month = dateObj.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+              const day = dateObj.toLocaleDateString('en-US', { day: 'numeric' });
+              
+              // Format Waktu
+              const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+              const location = event.location || 'Online';
+              
+              // Tentukan status badge logic
+              const now = new Date();
+              let statusClass = 'registered';
+              let statusText = 'Registered';
+              
+              if (dateObj < now) {
+                  statusClass = 'completed';
+                  statusText = 'Completed';
+              }
+
+              // Warna icon kalender (random/conditional)
+              const colors = ['blue', 'purple', 'green'];
+              const colorClass = colors[event.id % 3] || 'blue';
+
+              const cardHTML = `
+                <div class="event-card">
+                  <div class="event-date ${colorClass}">
+                    <span class="date-month">${month}</span>
+                    <span class="date-day">${day}</span>
+                  </div>
+                  <div class="event-content">
+                    <h3 class="event-title">${title}</h3>
+                    <p class="event-description">${event.description ? event.description.substring(0, 60) + '...' : ''}</p>
+                    <div class="event-details">
+                      <span class="detail-item">
+                        <i class="fas fa-clock"></i> ${timeStr}
+                      </span>
+                      <span class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i> ${location}
+                      </span>
+                    </div>
+                    <div class="event-footer">
+                      <span class="status-badge ${statusClass}">${statusText}</span>
+                    </div>
+                  </div>
+                </div>
+              `;
+              container.insertAdjacentHTML('beforeend', cardHTML);
+          });
+      }
+
+      // --- 4. FETCH RECOMMENDED EVENTS (API: /api/events) ---
+      async function fetchRecommendedEvents() {
+          const container = document.getElementById('recommendedList');
+          try {
+              // Ambil 3 event terbaru
+              const response = await fetch(`${API_BASE_URL}/api/events?per_page=3&status=published`, {
+                  method: 'GET',
+                  headers: {
+                      'Accept': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  }
+              });
+              
+              const result = await response.json();
+              
+              // Handle variasi struktur data
+              let events = [];
+              if (result.data && Array.isArray(result.data)) events = result.data;
+              else if (result.data && result.data.data) events = result.data.data; // Paginated
+              else if (Array.isArray(result)) events = result;
+
+              renderRecommended(events);
+
+          } catch (error) {
+              console.error("Error fetching recommended:", error);
+              container.innerHTML = `<div class="empty-state">Gagal memuat rekomendasi.</div>`;
+          }
+      }
+
+      function renderRecommended(events) {
+          const container = document.getElementById('recommendedList');
+          container.innerHTML = '';
+
+          if(events.length === 0) {
+              container.innerHTML = '<div class="empty-state">Tidak ada event baru.</div>';
+              return;
+          }
+
+          events.forEach(event => {
+              // Gambar
+              let imgUrl = 'https://via.placeholder.com/400x250?text=Event';
+              if (event.image_url) {
+                   imgUrl = event.image_url.startsWith('http') 
+                   ? event.image_url 
+                   : `${API_BASE_URL}${event.image_url}`;
+              }
+
+              const dateStr = new Date(event.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric'});
+              const loc = event.location || 'Online';
+
+              const html = `
+                <div class="recommended-card">
+                  <div class="recommended-image">
+                    <img src="${imgUrl}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/400x250?text=No+Image'"/>
+                  </div>
+                  <div class="recommended-content">
+                    <h3 class="recommended-title">${event.title}</h3>
+                    <p class="recommended-details">${dateStr} • ${loc}</p>
+                    <a href="detail-event.html?id=${event.id}" class="register-btn" style="text-decoration:none; text-align:center; display:inline-block;">View Details</a>
+                  </div>
+                </div>
+              `;
+              container.insertAdjacentHTML('beforeend', html);
+          });
+      }
+
+      // --- 5. LOGOUT FUNCTION ---
+      async function handleLogout(msg = "Logout berhasil.") {
+          try {
+              await fetch(`${API_BASE_URL}/api/logout`, {
+                  method: 'POST',
+                  headers: { 'Authorization': `Bearer ${token}` }
+              });
+          } catch(e) { console.log("Logout error", e); }
+          
+          localStorage.clear();
+          alert(msg);
+          window.location.href = "login.html";
+      }
+
+      // --- EVENT LISTENERS UI ---
+      
+      // Tab Navigation (All, Upcoming, Past)
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      tabButtons.forEach(btn => {
+          btn.addEventListener("click", () => {
+              // Update visual tab active
+              tabButtons.forEach(b => b.classList.remove("active"));
+              btn.classList.add("active");
+
+              const tab = btn.dataset.tab; // 'all', 'upcoming', 'past'
+              const now = new Date();
+              
+              // Filter data global 'allMyBookings'
+              let filtered = [];
+              if (tab === 'all') {
+                  filtered = allMyBookings;
+              } else if (tab === 'upcoming') {
+                  filtered = allMyBookings.filter(b => {
+                      const d = b.event ? new Date(b.event.start_date) : new Date();
+                      return d >= now;
+                  });
+              } else if (tab === 'past') {
+                  filtered = allMyBookings.filter(b => {
+                      const d = b.event ? new Date(b.event.start_date) : new Date();
+                      return d < now;
+                  });
+              }
+              
+              renderMyEvents(filtered);
+          });
       });
 
-      // Search Functionality
+      // Search (Client Side Filter pada My Events)
       const searchInput = document.getElementById("searchInput");
       searchInput.addEventListener("input", (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        eventCards.forEach((card) => {
-          const title = card
-            .querySelector(".event-title")
-            .textContent.toLowerCase();
-          const description = card
-            .querySelector(".event-description")
-            .textContent.toLowerCase();
-
-          if (title.includes(searchTerm) || description.includes(searchTerm)) {
-            card.style.display = "flex";
-          } else {
-            card.style.display = "none";
-          }
-        });
+          const keyword = e.target.value.toLowerCase();
+          const filtered = allMyBookings.filter(b => {
+              const title = (b.event?.title || '').toLowerCase();
+              return title.includes(keyword);
+          });
+          renderMyEvents(filtered);
       });
 
-      // Filter Functionality
-      const categoryFilter = document.getElementById("categoryFilter");
-
-      function applyFilters() {
-        const category = categoryFilter.value.toLowerCase();
-
-        eventCards.forEach((card) => {
-          let show = true;
-          // Category filter dapat ditambahkan di sini jika diperlukan
-          card.style.display = show ? "flex" : "none";
-        });
-      }
-
-      if (categoryFilter) {
-        categoryFilter.addEventListener("change", applyFilters);
-      }
-
-      // Register Button Functionality
-      const registerButtons = document.querySelectorAll(".register-btn");
-      console.log("Found register buttons:", registerButtons.length);
-      
-      registerButtons.forEach((btn, index) => {
-        btn.addEventListener("click", (e) => {
-          e.preventDefault();
-          console.log("Register button clicked, index:", index);
-          
-          const card = btn.closest(".recommended-card");
-          const eventTitle = card.querySelector(".recommended-title").textContent;
-          const eventDetails = card.querySelector(".recommended-details").textContent;
-          const eventImage = card.querySelector(".recommended-image img").src;
-          
-          // Parse tanggal dan lokasi dari details (format: "April 5, 2024 • Online")
-          const detailsParts = eventDetails.split(' • ');
-          const eventDate = detailsParts[0] || 'TBA';
-          const eventLocation = detailsParts[1] || 'TBA';
-          
-          // Data event yang berbeda untuk setiap kartu
-          const eventDataList = [
-            {
-              title: 'Tech Innovation Conference',
-              category: 'Technology',
-              date: 'April 5, 2024',
-              time: '09:00 AM – 05:00 PM',
-              location: 'Online',
-              address: 'Virtual Event via Zoom',
-              price: 50000,
-              description: 'Join the biggest technology conference of the year featuring industry experts and innovative solutions.',
-              image: eventImage
-            },
-            {
-              title: 'Leadership Workshop',
-              category: 'Business',
-              date: 'April 12, 2024',
-              time: '08:00 AM – 04:00 PM',
-              location: 'Surabaya',
-              address: 'Grand City Convention Center, Surabaya',
-              price: 75000,
-              description: 'Develop your leadership skills with hands-on workshops led by experienced business leaders.',
-              image: eventImage
-            },
-            {
-              title: 'Creative Design Workshop',
-              category: 'Design',
-              date: 'April 18, 2024',
-              time: '10:00 AM – 06:00 PM',
-              location: 'Bandung',
-              address: 'Trans Convention Centre, Bandung',
-              price: 60000,
-              description: 'Unleash your creativity in this immersive design workshop covering UI/UX and graphic design.',
-              image: eventImage
-            }
-          ];
-          
-          // Simpan data event ke localStorage untuk digunakan di halaman detail
-          const eventData = eventDataList[index] || {
-            title: eventTitle,
-            category: 'General',
-            date: eventDate,
-            time: '09:00 AM – 05:00 PM',
-            location: eventLocation,
-            address: eventLocation,
-            price: 40000,
-            description: 'Join us for this exciting event!',
-            image: eventImage
-          };
-          
-          localStorage.setItem('selectedEvent', JSON.stringify(eventData));
-          
-          // Redirect ke halaman detail-event
-          window.location.href = 'detail-event.html';
-        });
-      });
-
-      // View Details Link
-      const actionLinks = document.querySelectorAll(".action-link");
-      actionLinks.forEach((link) => {
-        link.addEventListener("click", (e) => {
-          e.preventDefault();
-          const eventTitle = link
-            .closest(".event-card")
-            .querySelector(".event-title").textContent;
-          alert(`Viewing details for: ${eventTitle}`);
-        });
-      });
-
-      // Notification Bell
-      const notificationBtn = document.querySelector(".icon-btn");
-      notificationBtn.addEventListener("click", () => {
-        alert("You have 3 new notifications!");
-      });
-
-      // Isolasi scroll pada Recommended Events Section
-      const recommendedSection = document.querySelector(".recommended-section");
-      if (recommendedSection) {
-        recommendedSection.addEventListener("wheel", (e) => {
-          const element = recommendedSection;
-          const isAtTop = element.scrollTop === 0;
-          const isAtBottom =
-            element.scrollHeight - element.scrollTop === element.clientHeight;
-
-          // Jika scroll ke atas dan sudah di atas, atau scroll ke bawah dan sudah di bawah
-          // Biarkan scroll ke parent (halaman utama)
-          if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
-            return; // Biarkan scroll event bubble up
-          }
-
-          // Jika masih ada konten untuk di-scroll, cegah scroll ke parent
-          e.stopPropagation();
-        });
-
-        // Mencegah scroll dengan touch pada mobile
-        let touchStartY = 0;
-        recommendedSection.addEventListener("touchstart", (e) => {
-          touchStartY = e.touches[0].clientY;
-        });
-
-        recommendedSection.addEventListener("touchmove", (e) => {
-          const touchY = e.touches[0].clientY;
-          const element = recommendedSection;
-          const isAtTop = element.scrollTop === 0;
-          const isAtBottom =
-            element.scrollHeight - element.scrollTop === element.clientHeight;
-
-          const scrollingDown = touchY < touchStartY;
-          const scrollingUp = touchY > touchStartY;
-
-          if ((scrollingUp && isAtTop) || (scrollingDown && isAtBottom)) {
-            return; // Biarkan scroll event bubble up
-          }
-
-          e.stopPropagation();
-        });
-      }
-
-      // Logout Popup Toggle
+      // Logout UI logic
       const userAvatar = document.getElementById("userAvatar");
       const logoutPopup = document.getElementById("logoutPopup");
       const logoutBtn = document.getElementById("logoutBtn");
@@ -492,13 +424,17 @@
         }
       });
 
-      logoutBtn.addEventListener("click", () => {
-        if (confirm("Apakah Anda yakin ingin logout?")) {
-          localStorage.removeItem("userData");
-          localStorage.removeItem("isLoggedIn");
-          window.location.href = "login.html";
-        }
+      logoutBtn.addEventListener("click", (e) => {
+          e.preventDefault();
+          if(confirm("Yakin ingin logout?")) handleLogout();
       });
+
+      // Init Load
+      document.addEventListener('DOMContentLoaded', () => {
+          fetchMyBookings();
+          fetchRecommendedEvents();
+      });
+
     </script>
   </body>
 </html>

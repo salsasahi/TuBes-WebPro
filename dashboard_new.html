@@ -7,12 +7,19 @@
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    /* Tambahan style untuk loading dan error state */
+    .loading { text-align: center; padding: 40px; font-size: 1.2rem; color: #666; width: 100%; }
+    .error-msg { text-align: center; width: 100%; padding: 20px; color: #dc3545; background: #f8d7da; border-radius: 8px; }
+    .user-menu { display: flex; align-items: center; gap: 15px; }
+    .btn-logout { background: none; border: 1px solid #dc3545; color: #dc3545; padding: 5px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+    .btn-logout:hover { background: #dc3545; color: white; }
+  </style>
 </head>
 <body>
-  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
-      <img src="logoEvent.jpg" alt="EventKu Logo" class="logo-icon" />
+      <img src="logoEvent.jpg" alt="EventKu" class="logo-icon" onerror="this.style.display='none'"/> 
       <h1 class="logo-text">EventKu</h1>
     </div>
     <nav class="navbar-links">
@@ -22,13 +29,16 @@
       <a href="#contact">Kontak</a>
     </nav>
     <div class="navbar-right">
-      <a href="profilnew.html" class="user-avatar">
-        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop" alt="User" />
-      </a>
+      <div class="user-menu">
+        <span id="userNameDisplay" style="font-weight: 600; color: #333;">Hi, User</span>
+        <a href="profilnew.html" class="user-avatar">
+          <img id="userAvatarImg" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" />
+        </a>
+        <button onclick="handleLogout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+      </div>
     </div>
   </header>
 
-  <!-- HERO SECTION -->
   <section class="hero">
     <div class="hero-text">
       <h1>Temukan Event <span> Terbaik</span> di EventKu</h1>
@@ -38,81 +48,32 @@
       </div>
     </div>
     <div class="hero-img">
-      <img src="img.jpg" alt="Event Image" />
+      <img src="img.jpg" alt="Event Image" onerror="this.src='https://via.placeholder.com/600x400?text=EventKu+Hero'"/>
     </div>
   </section>
 
-  <!-- SEARCH SECTION -->
   <section class="search">
     <h2>Cari Event Favoritmu</h2>
     <div class="search-bar">
-      <input type="text" placeholder="Cari nama event..." />
-      <select>
-        <option>Semua Kategori</option>
-        <option>Teknologi</option>
-        <option>Musik</option>
-        <option>Bisnis</option>
-      </select>
-      <button><i class="fas fa-search"></i> Cari</button>
+      <input type="text" id="searchInput" placeholder="Cari nama event..." />
+      
+      <select id="categorySelect">
+        <option value="">Semua Kategori</option>
+        </select>
+      
+      <button id="searchBtn"><i class="fas fa-search"></i> Cari</button>
     </div>
   </section>
 
-  <!-- FEATURED EVENTS -->
   <section id="events" class="featured">
     <h2>Event Terbaru</h2>
     <p>Jangan lewatkan event-event terbaik bulan ini!</p>
 
-    <div class="event-list">
-      <div class="event-card">
-        <img src="tech.jpg" alt="Tech Summit" />
-        <div class="event-content">
-          <div class="event-header">
-            <span class="event-category tech">Teknologi</span>
-            <span class="event-date">15 Des 2024</span>
-          </div>
-          <h3>Tech Summit Indonesia 2024</h3>
-          <p>Konferensi teknologi terbesar di Indonesia dengan pembicara internasional.</p>
-          <div class="event-footer">
-            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Jakarta Convention Center</span>
-            <a href="detail-event.html?id=1" class="btn-small">Detail</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-card">
-        <img src="jakarta.jpg" alt="Music Festival" />
-        <div class="event-content">
-          <div class="event-header">
-            <span class="event-category music">Musik</span>
-            <span class="event-date">20 Des 2024</span>
-          </div>
-          <h3>Jakarta Music Festival</h3>
-          <p>Festival musik dengan lineup artis lokal dan internasional terbaik.</p>
-          <div class="event-footer">
-            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Gelora Bung Karno</span>
-            <a href="detail-event.html?id=1" class="btn-small">Detail</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-card">
-        <img src="startup.jpg" alt="Startup Expo" />
-        <div class="event-content">
-          <div class="event-header">
-            <span class="event-category bisnis">Bisnis</span>
-            <span class="event-date">25 Des 2024</span>
-          </div>
-          <h3>Startup Expo 2024</h3>
-          <p>Pameran startup terbesar dengan investor dan mentor berpengalaman.</p>
-          <div class="event-footer">
-            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Balai Kartini</span>
-            <a href="detail-event.html?id=1" class="btn-small">Detail</a>
-          </div>
-        </div>
-      </div>
+    <div class="event-list" id="eventListContainer">
+      <div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>
     </div>
+  </section>
 
-  <!-- TENTANG KAMI -->
   <section id="about" class="about-section-centered">
     <div class="about-content">
       <span class="sub-title">Tentang Kami</span>
@@ -136,7 +97,7 @@
     </div>
   </section>
 
-<footer id="contact" class="main-footer">
+  <footer id="contact" class="main-footer">
     <div class="footer-container">
       <div class="footer-info">
         <h3 class="footer-logo">EventKu</h3>
@@ -174,8 +135,190 @@
     </div>
     
     <div class="footer-bottom">
-      <p class="copyright">© 2024 **EventKu**. Semua hak cipta dilindungi.</p>
+      <p class="copyright">© 2024 <strong>EventKu</strong>. Semua hak cipta dilindungi.</p>
     </div>
   </footer>
+
+  <script>
+    // --- KONFIGURASI API ---
+    const API_BASE_URL = 'http://127.0.0.1:8000'; // Sesuaikan port backend Anda
+    
+    // --- CEK LOGIN & USER DATA ---
+    const token = localStorage.getItem('authToken');
+    const userDataStr = localStorage.getItem('userData');
+
+    if (!token) {
+        alert("Anda belum login! Mengarahkan ke halaman login...");
+        window.location.href = "login.html";
+    }
+
+    if (userDataStr) {
+        try {
+            const user = JSON.parse(userDataStr);
+            document.getElementById('userNameDisplay').textContent = `Hi, ${user.username || user.name || 'User'}`;
+            // Update avatar jika ada (gunakan UI Avatars sebagai fallback)
+            const avatarUrl = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
+            document.getElementById('userAvatarImg').src = avatarUrl;
+        } catch (e) { console.error("Error parsing user data", e); }
+    }
+
+    // --- DOM ELEMENTS ---
+    const eventContainer = document.getElementById('eventListContainer');
+    const searchInput = document.getElementById('searchInput');
+    const categorySelect = document.getElementById('categorySelect');
+    const searchBtn = document.getElementById('searchBtn');
+
+    // --- 1. FETCH CATEGORIES (Untuk Dropdown) ---
+    async function fetchCategories() {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/categories`, {
+                headers: { 'Accept': 'application/json' }
+            });
+            const result = await response.json();
+            
+            if (response.ok && result.data && result.data.categories) {
+                const categories = result.data.categories;
+                categories.forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    categorySelect.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error("Gagal memuat kategori:", error);
+        }
+    }
+
+    // --- 2. FETCH EVENTS (Data Utama) ---
+    async function fetchEvents() {
+        const keyword = searchInput.value;
+        const categoryId = categorySelect.value;
+
+        eventContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>';
+
+        try {
+            // Setup URL Parameter
+            const params = new URLSearchParams();
+            params.append('status', 'published'); // Hanya tampilkan yang published
+            if (keyword) params.append('search', keyword);
+            if (categoryId) params.append('category_id', categoryId);
+
+            const response = await fetch(`${API_BASE_URL}/api/events?${params.toString()}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.status === 401) {
+                handleLogout("Sesi berakhir. Silakan login kembali.");
+                return;
+            }
+
+            const result = await response.json();
+            
+            // Handle struktur data (kadang dibungkus 'data', kadang pagination 'data.data')
+            let events = [];
+            if (result.data && Array.isArray(result.data.data)) {
+                events = result.data.data;
+            } else if (result.data && Array.isArray(result.data)) {
+                events = result.data;
+            } else if (Array.isArray(result)) {
+                events = result;
+            }
+
+            renderEvents(events);
+
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            eventContainer.innerHTML = `<div class="error-msg">Gagal memuat event. Pastikan server backend menyala.</div>`;
+        }
+    }
+
+    // --- 3. RENDER EVENTS KE HTML ---
+    function renderEvents(events) {
+        eventContainer.innerHTML = '';
+
+        if (!events || events.length === 0) {
+            eventContainer.innerHTML = '<div class="loading">Tidak ada event ditemukan.</div>';
+            return;
+        }
+
+        events.forEach(event => {
+            // Handle Gambar (Cek apakah URL full atau path local storage)
+            let imageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
+            if (event.image_url) {
+                imageUrl = event.image_url.startsWith('http') 
+                    ? event.image_url 
+                    : `${API_BASE_URL}${event.image_url}`;
+            }
+
+            // Format Tanggal
+            const dateStr = new Date(event.start_date).toLocaleDateString('id-ID', {
+                day: 'numeric', month: 'short', year: 'numeric'
+            });
+
+            // HTML Card Event
+            const cardHTML = `
+              <div class="event-card">
+                <img src="${imageUrl}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/400x200?text=Error+Loading+Image'">
+                <div class="event-content">
+                  <div class="event-header">
+                    <span class="event-category" style="background: #e0f0ff; color: #007bff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
+                        ${event.category ? event.category.name : 'Umum'}
+                    </span>
+                    <span class="event-date">${dateStr}</span>
+                  </div>
+                  <h3>${event.title}</h3>
+                  <p>${event.description ? event.description.substring(0, 80) + '...' : '...'}</p>
+                  <div class="event-footer">
+                    <span class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location || 'Online'}</span>
+                    <a href="detail-event.html?id=${event.id}" class="btn-small">Detail</a>
+                  </div>
+                </div>
+              </div>
+            `;
+            eventContainer.insertAdjacentHTML('beforeend', cardHTML);
+        });
+    }
+
+    // --- 4. LOGOUT ---
+    async function handleLogout(msg = "Logout Berhasil") {
+        if (!confirm("Yakin ingin keluar?")) return;
+
+        try {
+            await fetch(`${API_BASE_URL}/api/logout`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                }
+            });
+        } catch (e) { console.log("Logout error ignored", e); }
+
+        localStorage.clear();
+        alert(msg);
+        window.location.href = "login.html";
+    }
+
+    // --- EVENT LISTENERS ---
+    searchBtn.addEventListener('click', fetchEvents);
+    
+    // Cari saat tekan Enter
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') fetchEvents();
+    });
+
+    // Cari otomatis saat ganti kategori
+    categorySelect.addEventListener('change', fetchEvents);
+
+    // --- JALANKAN SAAT LOAD ---
+    document.addEventListener('DOMContentLoaded', () => {
+        fetchCategories(); // Isi dropdown dulu
+        fetchEvents();     // Load event list
+    });
+  </script>
 </body>
 </html>

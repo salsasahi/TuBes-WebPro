@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,44 +9,110 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="eo.css" />
   <style>
-    /* Tambahan CSS untuk loading state */
-    .loading-row { text-align: center; padding: 20px; }
+    .admin-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .loading-row td {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .empty-row td {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+    }
+
+    .badge-published {
+      background-color: #28a745;
+    }
+
+    .badge-draft {
+      background-color: #6c757d;
+    }
+
+    .badge-cancelled {
+      background-color: #dc3545;
+    }
+
+    .action-btn {
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .stats-card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stats-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .event-image-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #f0f0f0;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="d-flex">
+    <!-- Sidebar -->
     <aside class="sidebar d-flex flex-column justify-content-between p-3">
       <div>
         <h5 class="text-white fw-bold mb-4"><i class="bi bi-calendar-event me-2"></i>Event Admin</h5>
         <ul class="nav flex-column">
           <li class="nav-item mb-2">
-            <a href="eo.html" class="nav-link active text-white"><i class="bi bi-house-door me-2"></i>Dashboard</a>
+            <a href="#" class="nav-link active text-white"><i class="bi bi-house-door me-2"></i>Dashboard</a>
           </li>
-          </ul>
+        </ul>
       </div>
 
       <div class="admin-info text-white-50 small">
         <div class="d-flex align-items-center justify-content-between">
           <div class="d-flex align-items-center">
-            <img src="https://ui-avatars.com/api/?name=Admin&background=random" class="rounded-circle me-2" alt="Admin" style="width: 35px; height: 35px; object-fit: cover;" id="adminAvatar">
+            <div class="admin-avatar me-2">
+              <i class="bi bi-person"></i>
+            </div>
             <div>
-              <p class="mb-0 text-white fw-semibold" id="adminNameDisplay">Admin User</p>
-              <small id="adminEmailDisplay">admin@eventku.com</small>
+              <p class="mb-0 text-white fw-semibold" id="adminName">Loading...</p>
+              <small id="adminEmail">-</small>
             </div>
           </div>
-          <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#logoutModal" title="Logout">
+          <button class="btn btn-sm btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#logoutModal"
+            title="Logout">
             <i class="bi bi-box-arrow-right"></i>
           </button>
         </div>
       </div>
     </aside>
 
+    <!-- Logout Confirmation Modal -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right me-2"></i>Konfirmasi Logout</h5>
+            <h5 class="modal-title" id="logoutModalLabel"><i class="bi bi-box-arrow-right me-2"></i>Konfirmasi Logout
+            </h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -53,67 +120,73 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-            <button type="button" class="btn btn-danger" id="confirmLogout"><i class="bi bi-box-arrow-right me-1"></i>Logout</button>
+            <button type="button" class="btn btn-danger" id="confirmLogout"><i
+                class="bi bi-box-arrow-right me-1"></i>Logout</button>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Main Content -->
     <main class="main-content flex-grow-1 p-4 bg-light">
+      <!-- Header -->
       <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h5 class="fw-semibold">Dashboard Overview</h5>
-          <p class="text-muted small mb-0">Welcome back! Here's what's happening with your events.</p>
+          <p class="text-muted small mb-0" id="welcomeText">Welcome back! Here's what's happening with your events.</p>
         </div>
-        <a href="tambah-event.html"><button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Event</button> </a>
+        <a href="tambah-event.html"><button class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New
+            Event</button></a>
       </div>
 
+      <!-- Stats Cards -->
       <div class="row g-3 mb-4">
-        <div class="col-md-3">
-          <div class="card shadow-sm border-0">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 stats-card">
             <div class="card-body">
               <h6 class="text-muted">Total Events</h6>
-              <h3 class="fw-bold" id="statTotalEvents">-</h3>
-              <p class="text-success small mb-0"><i class="bi bi-calendar-check"></i> Recorded events</p>
+              <h3 class="fw-bold" id="totalEvents">-</h3>
+              <p class="text-info small mb-0"><i class="bi bi-calendar-check"></i> all events</p>
             </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card shadow-sm border-0">
+          <div class="card shadow-sm border-0 stats-card">
             <div class="card-body">
               <h6 class="text-muted">Total Participants</h6>
-              <h3 class="fw-bold" id="statTotalParticipants">-</h3>
-              <p class="text-success small mb-0"><i class="bi bi-people"></i> Across all events</p>
+              <h3 class="fw-bold" id="totalParticipants">-</h3>
+              <p class="text-success small mb-0"><i class="bi bi-people"></i> registered</p>
             </div>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="card shadow-sm border-0">
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0 stats-card">
             <div class="card-body">
-              <h6 class="text-muted">Active Events</h6>
-              <h3 class="fw-bold" id="statActiveEvents">-</h3>
-              <p class="text-info small mb-0"><i class="bi bi-lightning"></i> Running now</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card shadow-sm border-0">
-            <div class="card-body">
-              <h6 class="text-muted">Draft Events</h6>
-              <h3 class="fw-bold" id="statDraftEvents">-</h3>
-              <p class="text-warning small mb-0"><i class="bi bi-pencil"></i> Not published</p>
+              <h6 class="text-muted">Revenue</h6>
+              <h3 class="fw-bold" id="totalRevenue">-</h3>
+              <p class="text-success small mb-0"><i class="bi bi-cash"></i> total income</p>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- Recent Events Table -->
       <div class="card shadow-sm border-0">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-semibold mb-0">Recent Events</h6>
-            <div class="input-group w-auto">
-              <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search events..." />
-              <button class="btn btn-sm btn-outline-secondary" id="btnSearch"><i class="bi bi-search"></i></button>
+            <h6 class="fw-semibold mb-0">All Events</h6>
+            <div class="d-flex gap-2">
+              <input type="text" class="form-control form-control-sm" placeholder="Search events..." id="searchInput"
+                style="width: 200px;" />
+              <select class="form-select form-select-sm" id="statusFilter" style="width: 130px;">
+                <option value="">All Status</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+              <select class="form-select form-select-sm" id="categoryFilter" style="width: 150px;">
+                <option value="">All Categories</option>
+              </select>
             </div>
           </div>
 
@@ -124,25 +197,28 @@
                   <th>Event</th>
                   <th>Date</th>
                   <th>Participants</th>
+                  <th>Price</th>
                   <th>Status</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody id="eventsTableBody">
-                <tr>
-                    <td colspan="5" class="loading-row"><div class="spinner-border text-primary" role="status"></div> Loading data...</td>
+                <tr class="loading-row">
+                  <td colspan="6">
+                    <i class="bi bi-arrow-repeat spin"></i> Memuat data...
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
+          <!-- Pagination -->
           <div class="d-flex justify-content-between align-items-center mt-3">
-            <small class="text-muted" id="showingText">Showing events</small>
+            <small class="text-muted" id="paginationInfo">Showing 0 results</small>
             <nav>
-              <ul class="pagination pagination-sm mb-0">
-                <li class="page-item"><button class="page-link" id="prevPage">Previous</button></li>
-                <li class="page-item disabled"><span class="page-link" id="currentPage">1</span></li>
-                <li class="page-item"><button class="page-link" id="nextPage">Next</button></li>
+              <ul class="pagination pagination-sm mb-0" id="paginationNav">
+                <li class="page-item disabled"><a class="page-link" href="#" id="prevPage">Previous</a></li>
+                <li class="page-item"><a class="page-link" href="#" id="nextPage">Next</a></li>
               </ul>
             </nav>
           </div>
@@ -154,212 +230,438 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // --- KONFIGURASI API ---
+    // ==================================================
+    // KONFIGURASI API
+    // ==================================================
     const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    // ==================================================
+    // CEK AUTENTIKASI
+    // ==================================================
     const token = localStorage.getItem('authToken');
-    const userDataStr = localStorage.getItem('userData');
-    let currentPage = 1;
-    let lastPage = 1;
 
-    // --- CEK AUTH ---
     if (!token) {
-        window.location.href = 'login.html';
+      alert("Sesi habis atau belum login. Silakan login kembali.");
+      window.location.href = "login.html";
     }
 
-    // --- LOAD USER INFO ---
-    if (userDataStr) {
-        try {
-            const user = JSON.parse(userDataStr);
-            document.getElementById('adminNameDisplay').textContent = user.username || 'Admin';
-            document.getElementById('adminEmailDisplay').textContent = user.email || 'admin@eventku.com';
-            document.getElementById('adminAvatar').src = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
-        } catch (e) { console.error(e); }
+    // ==================================================
+    // VARIABEL GLOBAL
+    // ==================================================
+    let currentPage = 1;
+    let totalPages = 1;
+    let perPage = 10;
+    let searchTimeout = null;
+
+    // ==================================================
+    // ELEMEN DOM
+    // ==================================================
+    const eventsTableBody = document.getElementById('eventsTableBody');
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const paginationInfo = document.getElementById('paginationInfo');
+    const prevPage = document.getElementById('prevPage');
+    const nextPage = document.getElementById('nextPage');
+
+    // ==================================================
+    // FUNGSI HELPER
+    // ==================================================
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('id-ID').format(parseFloat(amount) || 0);
     }
 
-    // --- 1. FETCH STATS ---
-    async function fetchStats() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/events/stats`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                const data = result.data || result; // Sesuaikan dengan struktur response backend
-
-                // Asumsi backend mengembalikan field berikut. Jika tidak, sesuaikan key-nya.
-                document.getElementById('statTotalEvents').textContent = data.total_events || 0;
-                document.getElementById('statTotalParticipants').textContent = data.total_participants || 0;
-                document.getElementById('statActiveEvents').textContent = data.active_events || 0;
-                // Ganti revenue dengan Draft atau data lain jika API revenue tidak ada
-                document.getElementById('statDraftEvents').textContent = data.draft_events || 0;
-            }
-        } catch (error) {
-            console.error("Gagal mengambil stats:", error);
-        }
-    }
-
-    // --- 2. FETCH EVENTS LIST ---
-    async function fetchEvents(page = 1, search = '') {
-        const tableBody = document.getElementById('eventsTableBody');
-        tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-3"><div class="spinner-border text-primary" role="status"></div></td></tr>`;
-
-        try {
-            const params = new URLSearchParams({
-                page: page,
-                per_page: 5, // Tampilkan 5 per halaman agar rapi
-                search: search
-            });
-
-            const response = await fetch(`${API_BASE_URL}/api/events?${params.toString()}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 401) {
-                handleLogout(); // Token expired
-                return;
-            }
-
-            const result = await response.json();
-            
-            // Handle struktur pagination Laravel
-            let events = [];
-            if (result.data && result.data.data) {
-                events = result.data.data;
-                currentPage = result.data.current_page;
-                lastPage = result.data.last_page;
-            } else if (result.data) {
-                events = result.data;
-            }
-
-            renderTable(events);
-            updatePaginationUI();
-
-        } catch (error) {
-            console.error("Error fetching events:", error);
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Gagal memuat data. Periksa koneksi server.</td></tr>`;
-        }
-    }
-
-    // --- RENDER TABLE ---
-    function renderTable(events) {
-        const tableBody = document.getElementById('eventsTableBody');
-        tableBody.innerHTML = '';
-
-        if (events.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">Tidak ada event ditemukan.</td></tr>`;
-            return;
-        }
-
-        events.forEach(event => {
-            const categoryName = event.category ? event.category.name : 'Uncategorized';
-            const dateStr = new Date(event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            
-            // Badge Status Logic
-            let badgeClass = 'bg-secondary';
-            if (event.status === 'published') badgeClass = 'bg-success';
-            if (event.status === 'draft') badgeClass = 'bg-warning text-dark';
-            if (event.status === 'completed') badgeClass = 'bg-dark';
-
-            const row = `
-                <tr>
-                  <td>
-                    <div>
-                      <h6 class="mb-0 fw-semibold">${event.title}</h6>
-                      <small class="text-muted">${categoryName}</small>
-                    </div>
-                  </td>
-                  <td>${dateStr}</td>
-                  <td>${event.current_participants || 0}/${event.max_participants || 'Unl'}</td>
-                  <td><span class="badge ${badgeClass}">${event.status}</span></td>
-                  <td>
-                    <a href="edit-event.html?id=${event.id}" class="text-decoration-none" title="Edit">
-                      <i class="bi bi-pencil-square text-primary me-2"></i>
-                    </a>
-                    <a href="#" onclick="deleteEvent(${event.id})" class="text-decoration-none" title="Delete">
-                        <i class="bi bi-trash text-danger"></i>
-                    </a>
-                  </td>
-                </tr>
-            `;
-            tableBody.insertAdjacentHTML('beforeend', row);
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      try {
+        return new Date(dateString).toLocaleDateString('id-ID', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
         });
+      } catch (e) {
+        return dateString;
+      }
     }
 
-    // --- 3. DELETE EVENT ---
-    window.deleteEvent = async (id) => {
-        if (!confirm("Apakah Anda yakin ingin menghapus event ini?")) return;
+    function getStatusBadgeClass(status) {
+      const statusMap = {
+        'published': 'bg-success',
+        'active': 'bg-success',
+        'draft': 'bg-secondary',
+        'cancelled': 'bg-danger',
+        'completed': 'bg-info'
+      };
+      return statusMap[status?.toLowerCase()] || 'bg-secondary';
+    }
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/events/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+    // ==================================================
+    // FETCH PROFILE
+    // Endpoint: GET /api/me
+    // ==================================================
+    async function fetchProfile() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/me`, {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
 
-            if (response.ok) {
-                alert("Event berhasil dihapus");
-                fetchEvents(currentPage); // Refresh data
-                fetchStats(); // Refresh stats juga
-            } else {
-                alert("Gagal menghapus event");
-            }
-        } catch (error) {
-            console.error("Error deleting:", error);
-            alert("Terjadi kesalahan.");
+        if (response.status === 401) {
+          localStorage.clear();
+          window.location.href = "login.html";
+          return;
         }
-    };
 
-    // --- 4. LOGOUT ---
-    document.getElementById('confirmLogout').addEventListener('click', async function() {
-        try {
-            await fetch(`${API_BASE_URL}/api/logout`, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
-            });
-        } catch (e) { console.log(e); }
-        
+        const result = await response.json();
+        console.log("Profile Response:", result);
+
+        if (result.data || result.user) {
+          const user = result.data || result.user;
+          document.getElementById('adminName').textContent = user.username || user.name || 'Admin';
+          document.getElementById('adminEmail').textContent = user.email || '-';
+          document.getElementById('welcomeText').textContent =
+            `Welcome back, ${user.username || 'Admin'}! Here's what's happening with your events.`;
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    }
+
+    // ==================================================
+    // FETCH DASHBOARD STATS
+    // Endpoint: GET /api/events/dashboard/stats
+    // ==================================================
+    async function fetchDashboardStats() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/events/dashboard/stats`, {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 401) {
+          localStorage.clear();
+          window.location.href = "login.html";
+          return;
+        }
+
+        const result = await response.json();
+        console.log("Dashboard Stats Response:", result);
+
+        if (result.success && result.data) {
+          const stats = result.data;
+          document.getElementById('totalEvents').textContent = stats.total_events || 0;
+          document.getElementById('totalParticipants').textContent = formatCurrency(stats.total_participants || 0);
+          document.getElementById('totalRevenue').textContent = `IDR ${formatCurrency(stats.total_revenue || 0)}`;
+        }
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      }
+    }
+
+    // ==================================================
+    // FETCH CATEGORIES
+    // Endpoint: GET /api/categories
+    // ==================================================
+    async function fetchCategories() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/categories`, {
+          headers: { 'Accept': 'application/json' }
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.categories) {
+          result.data.categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.name;
+            categoryFilter.appendChild(option);
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+
+    // ==================================================
+    // FETCH EVENTS
+    // Endpoint: GET /api/events
+    // ==================================================
+    async function fetchEvents() {
+      const search = searchInput.value;
+      const status = statusFilter.value;
+      const categoryId = categoryFilter.value;
+
+      try {
+        eventsTableBody.innerHTML = `
+          <tr class="loading-row">
+            <td colspan="6">
+              <i class="bi bi-arrow-repeat spin"></i> Memuat data...
+            </td>
+          </tr>
+        `;
+
+        // Build query params
+        const params = new URLSearchParams();
+        params.append('page', currentPage);
+        params.append('per_page', perPage);
+
+        if (search) params.append('search', search);
+        if (status) params.append('status', status);
+        if (categoryId) params.append('category_id', categoryId);
+
+        const url = `${API_BASE_URL}/api/events?${params.toString()}`;
+        console.log("Fetching Events:", url);
+
+        const response = await fetch(url, {
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.status === 401) {
+          localStorage.clear();
+          window.location.href = "login.html";
+          return;
+        }
+
+        const result = await response.json();
+        console.log("Events Response:", result);
+
+        // Handle pagination info
+        let events = [];
+        let total = 0;
+        let from = 0;
+        let to = 0;
+
+        // Structure: { data: { events: [...], pagination: {...} } }
+        if (result.data && result.data.events && Array.isArray(result.data.events)) {
+          events = result.data.events;
+          const pagination = result.data.pagination || {};
+          total = pagination.total_items || events.length;
+          currentPage = pagination.current_page || 1;
+          totalPages = pagination.total_pages || 1;
+          from = ((currentPage - 1) * perPage) + 1;
+          to = Math.min(currentPage * perPage, total);
+        }
+        // Structure: { data: [...] }
+        else if (result.data && Array.isArray(result.data)) {
+          events = result.data;
+          total = result.meta?.total || events.length;
+          currentPage = result.meta?.current_page || 1;
+          totalPages = result.meta?.last_page || 1;
+          from = result.meta?.from || 1;
+          to = result.meta?.to || events.length;
+        }
+        // Structure: { data: { data: [...] } } - Laravel paginate
+        else if (result.data && result.data.data) {
+          events = result.data.data;
+          total = result.data.total || events.length;
+          currentPage = result.data.current_page || 1;
+          totalPages = result.data.last_page || 1;
+          from = result.data.from || 1;
+          to = result.data.to || events.length;
+        }
+
+        renderEvents(events);
+        updatePagination(from, to, total);
+
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        eventsTableBody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="6">
+              <i class="bi bi-exclamation-triangle text-danger"></i> Gagal memuat data: ${error.message}
+            </td>
+          </tr>
+        `;
+      }
+    }
+
+    // ==================================================
+    // RENDER EVENTS TABLE
+    // ==================================================
+    function renderEvents(events) {
+      if (!events || events.length === 0) {
+        eventsTableBody.innerHTML = `
+          <tr class="empty-row">
+            <td colspan="6">
+              <i class="bi bi-calendar-x"></i> Tidak ada event ditemukan
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      events.forEach(event => {
+        const imageUrl = event.image_url
+          ? (event.image_url.startsWith('http') ? event.image_url : `${API_BASE_URL}${event.image_url}`)
+          : null;
+
+        const categoryName = event.category?.name || event.category_name || '-';
+        const dateDisplay = formatDate(event.start_date);
+        const currentParticipants = event.current_participants || 0;
+        const maxParticipants = event.max_participants || 0;
+        const price = parseFloat(event.price) || 0;
+        const status = event.status || 'draft';
+        const badgeClass = getStatusBadgeClass(status);
+
+        html += `
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                ${imageUrl
+            ? `<img src="${imageUrl}" class="event-image-thumb me-2" alt="${event.title}" onerror="this.style.display='none'">`
+            : `<div class="event-image-thumb me-2 d-flex align-items-center justify-content-center bg-secondary text-white"><i class="bi bi-calendar-event"></i></div>`
+          }
+                <div>
+                  <h6 class="mb-0 fw-semibold">${event.title || 'Untitled'}</h6>
+                  <small class="text-muted">${categoryName}</small>
+                </div>
+              </div>
+            </td>
+            <td>${dateDisplay}</td>
+            <td>${currentParticipants}/${maxParticipants}</td>
+            <td>IDR ${formatCurrency(price)}</td>
+            <td><span class="badge ${badgeClass}">${status.charAt(0).toUpperCase() + status.slice(1)}</span></td>
+            <td>
+              <i class="bi bi-pencil-square text-primary me-2 action-btn" title="Edit" onclick="editEvent(${event.id})"></i>
+              <i class="bi bi-trash text-danger action-btn" title="Delete" onclick="deleteEvent(${event.id})"></i>
+            </td>
+          </tr>
+        `;
+      });
+
+      eventsTableBody.innerHTML = html;
+    }
+
+    // ==================================================
+    // UPDATE PAGINATION
+    // ==================================================
+    function updatePagination(from, to, total) {
+      paginationInfo.textContent = `Showing ${from} to ${to} of ${total} results`;
+
+      prevPage.parentElement.classList.toggle('disabled', currentPage <= 1);
+      nextPage.parentElement.classList.toggle('disabled', currentPage >= totalPages);
+    }
+
+    // ==================================================
+    // EVENT ACTIONS
+    // ==================================================
+    function viewEvent(eventId) {
+      window.location.href = `detail-event.html?id=${eventId}`;
+    }
+
+    function editEvent(eventId) {
+      window.location.href = `edit-event.html?id=${eventId}`;
+    }
+
+    async function deleteEvent(eventId) {
+      if (!confirm('Apakah Anda yakin ingin menghapus event ini?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+          method: 'DELETE',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          alert('Event berhasil dihapus!');
+          fetchEvents();
+          fetchDashboardStats();
+        } else {
+          const result = await response.json();
+          alert(`Gagal menghapus: ${result.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        alert(`Error: ${error.message}`);
+      }
+    }
+
+    // ==================================================
+    // LOGOUT
+    // ==================================================
+    async function handleLogout() {
+      try {
+        await fetch(`${API_BASE_URL}/api/logout`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (error) {
+        console.error("Logout error:", error);
+      } finally {
         localStorage.clear();
         window.location.href = 'login.html';
-    });
-
-    // --- PAGINATION & SEARCH ---
-    function updatePaginationUI() {
-        document.getElementById('currentPage').innerText = currentPage;
-        document.getElementById('prevPage').parentElement.classList.toggle('disabled', currentPage <= 1);
-        document.getElementById('nextPage').parentElement.classList.toggle('disabled', currentPage >= lastPage);
+      }
     }
 
-    document.getElementById('prevPage').addEventListener('click', () => {
-        if (currentPage > 1) fetchEvents(currentPage - 1, document.getElementById('searchInput').value);
-    });
+    // ==================================================
+    // EVENT LISTENERS
+    // ==================================================
+    document.addEventListener('DOMContentLoaded', function () {
+      // Fetch initial data
+      fetchProfile();
+      fetchDashboardStats();
+      fetchCategories();
+      fetchEvents();
 
-    document.getElementById('nextPage').addEventListener('click', () => {
-        if (currentPage < lastPage) fetchEvents(currentPage + 1, document.getElementById('searchInput').value);
-    });
+      // Search with debounce
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentPage = 1;
+          fetchEvents();
+        }, 500);
+      });
 
-    document.getElementById('btnSearch').addEventListener('click', () => {
-        fetchEvents(1, document.getElementById('searchInput').value);
-    });
-
-    // --- INIT ---
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchStats();
+      // Filters
+      statusFilter.addEventListener('change', () => {
+        currentPage = 1;
         fetchEvents();
+      });
+
+      categoryFilter.addEventListener('change', () => {
+        currentPage = 1;
+        fetchEvents();
+      });
+
+      // Pagination
+      prevPage.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+          currentPage--;
+          fetchEvents();
+        }
+      });
+
+      nextPage.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (currentPage < totalPages) {
+          currentPage++;
+          fetchEvents();
+        }
+      });
+
+      // Logout
+      document.getElementById('confirmLogout').addEventListener('click', handleLogout);
     });
   </script>
+
 </body>
+
 </html>

@@ -1,269 +1,621 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Konfirmasi Pemesanan</title>
-    <link rel="stylesheet" href="style-detail2.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
-    <style>
-      .btn-pesan:disabled { background-color: #ccc; cursor: not-allowed; }
-      .loading-spinner {
-        display: inline-block; width: 1rem; height: 1rem;
-        border: 2px solid #fff; border-radius: 50%;
-        border-top-color: transparent; animation: spin 1s linear infinite; margin-right: 5px;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Konfirmasi Pemesanan - EventKu</title>
+  <link rel="stylesheet" href="style-detail2.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <style>
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      color: white;
+    }
+
+    .loading-overlay.hidden {
+      display: none;
+    }
+
+    .loading-overlay i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
       }
-      @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
-  </head>
-  <body>
-    <header class="navbar">
-      <div class="back-section" style="cursor: pointer;" onclick="window.history.back()">
-        <i class="bi bi-arrow-left"></i>
-        <span>Detail Event</span>
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .booking-code {
+      background: linear-gradient(135deg, #4A90E2, #357ABD);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-top: 10px;
+      display: inline-block;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-paid {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-cancelled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .btn-pesan {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-pesan:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .btn-pesan .spinner {
+      display: none;
+    }
+
+    .btn-pesan.loading .spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+
+    .btn-pesan.loading .btn-text {
+      display: none;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+
+    .payment-info {
+      background: linear-gradient(135deg, #e8f4fd, #d1e8fa);
+      border: 1px solid #4A90E2;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .payment-info h4 {
+      margin: 0 0 10px 0;
+      color: #4A90E2;
+    }
+
+    .payment-info p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .payment-info .order-id {
+      font-family: monospace;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .no-order-data {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .no-order-data i {
+      font-size: 4rem;
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+
+    .no-order-data h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .no-order-data p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .no-order-data .btn-back {
+      display: inline-block;
+      padding: 12px 30px;
+      background: #4A90E2;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: 0.3s;
+    }
+
+    .no-order-data .btn-back:hover {
+      background: #357ABD;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading Overlay -->
+  <div class="loading-overlay hidden" id="loadingOverlay">
+    <i class="bi bi-arrow-repeat"></i>
+    <p id="loadingText">Memproses pembayaran...</p>
+  </div>
+
+  <header class="navbar">
+    <div class="back-section" style="cursor: pointer;" onclick="window.history.back()">
+      <i class="bi bi-arrow-left"></i>
+      <span>Detail Event</span>
+    </div>
+    <nav class="nav-links">
+      <a href="dashboard_new.html">Dashboard</a>
+      <a href="dashboard_new.html#events">Events</a>
+      <a href="profilnew.html#my-events">My Events</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card" id="mainContent">
+      <!-- Error Message -->
+      <div class="error-message" id="errorMessage"></div>
+
+      <div class="section-header">
+        <h1>Konfirmasi Pemesanan</h1>
+        <div>
+          <h2 id="eventTitle">Loading...</h2>
+          <span class="booking-code" id="bookingCode" style="display: none;"></span>
+          <span class="status-badge status-pending" id="statusBadge" style="display: none;">Pending</span>
+        </div>
+        <div class="event-location" id="eventLocation">
+          <strong>-</strong><br />
+          -<br />
+          <span class="ticket-info">- Tiket</span>
+        </div>
       </div>
-      <nav class="nav-links">
-        <a href="dashboard_new.html">Dashboard</a>
-        <a href="profilnew.html">My Events</a>
-        <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" class="avatar" />
-      </nav>
-    </header>
 
-    <main class="container">
-      <section class="card">
-        <div class="section-header">
-          <h1>Konfirmasi Pemesanan</h1>
-          <h2 id="eventName">Nama Event</h2>
-          <div class="event-location" id="eventLocationDisplay">
-            <strong>Location</strong><br />Address<br /><span class="ticket-info">-</span>
+      <hr class="divider" />
+
+      <div class="event-date-section">
+        <h3>Tanggal Event</h3>
+        <p class="event-date" id="eventDate">-</p>
+        <ul class="event-notes">
+          <li>
+            <i class="bi bi-x-circle-fill"></i>
+            <span>Tidak bisa refund</span>
+          </li>
+          <li>
+            <i class="bi bi-square"></i>
+            <span>Tempat duduk bebas</span>
+          </li>
+          <li>
+            <i class="bi bi-calendar-event"></i>
+            <span>Berlaku di tanggal terpilih</span>
+          </li>
+        </ul>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="form-section">
+        <h3>Detail Pemesan</h3>
+        <form id="bookingForm">
+          <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="customerName" placeholder="Nama Lengkap" required />
           </div>
-        </div>
 
-        <hr class="divider" />
-
-        <div class="event-date-section">
-          <h3>Tanggal Event</h3>
-          <p class="event-date" id="eventDateDisplay">-</p>
-          <ul class="event-notes">
-            <li><i class="bi bi-x-circle-fill"></i><span>Tidak bisa refund</span></li>
-            <li><i class="bi bi-square"></i><span>Tempat duduk bebas</span></li>
-          </ul>
-        </div>
-
-        <hr class="divider" />
-
-        <div class="form-section">
-          <h3>Detail Pemesanan</h3>
-          <form id="bookingForm">
-            <div class="form-group">
-              <label>Nama Lengkap</label>
-              <input type="text" id="inputName" placeholder="Nama Lengkap" required />
-            </div>
-            <div class="form-group">
-              <label>Nomor Handphone</label>
-              <input type="tel" id="inputPhone" placeholder="Nomor Handphone" required />
-            </div>
-            <div class="form-group">
-              <label>Jenis Kelamin</label>
-              <div class="radio-group">
-                <label class="radio-label">
-                  <input type="radio" name="gender" value="Laki-Laki" checked />
-                  <span>Laki-Laki</span>
-                </label>
-                <label class="radio-label">
-                  <input type="radio" name="gender" value="Perempuan" />
-                  <span>Perempuan</span>
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Alamat Email</label>
-              <input type="email" id="inputEmail" placeholder="Alamat Email" required />
-            </div>
-          </form>
-        </div>
-
-        <hr class="divider" />
-
-        <div class="price-section">
-          <h3>Detail Harga</h3>
-          <div class="price-item" id="ticket-price-item">
-            <span>Tiket x (Pax)</span><span>IDR 0</span>
+          <div class="form-group">
+            <label>Nomor Handphone</label>
+            <input type="tel" id="customerPhone" placeholder="Contoh: 08123456789" required />
           </div>
-          <div class="price-item">
-            <span>Biaya Layanan</span><span>IDR 2.000</span>
+
+          <div class="form-group">
+            <label>Jenis Kelamin</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" name="gender" value="Laki-Laki" checked />
+                <span>Laki-Laki</span>
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="gender" value="Perempuan" />
+                <span>Perempuan</span>
+              </label>
+            </div>
           </div>
-          <hr class="price-divider" />
-          <div class="total">
-            <span>Total Pembayaran</span><span class="total-amount" id="totalAmountDisplay">IDR 0</span>
+
+          <div class="form-group">
+            <label>Alamat Email</label>
+            <input type="email" id="customerEmail" placeholder="Alamat Email" required />
           </div>
+        </form>
+      </div>
+
+      <hr class="divider" />
+
+      <div class="price-section">
+        <h3>Detail Harga</h3>
+        <div class="price-item" id="ticket-price-item">
+          <span>Tiket (Pax)</span>
+          <span id="ticketPriceDisplay">IDR 0</span>
         </div>
+        <div class="price-item">
+          <span>Biaya Layanan</span>
+          <span id="serviceFeeDisplay">IDR 2.000</span>
+        </div>
+        <hr class="price-divider" />
+        <div class="total">
+          <span>Total Pembayaran</span>
+          <span class="total-amount" id="totalAmountDisplay">IDR 0</span>
+        </div>
+      </div>
 
-        <button class="btn-pesan" id="submitBtn">Pesan</button>
-      </section>
-    </main>
+      <!-- Payment Info (akan muncul setelah ada booking) -->
+      <div class="payment-info" id="paymentInfo" style="display: none;">
+        <h4><i class="bi bi-info-circle"></i> Informasi Pembayaran</h4>
+        <p>Order ID: <span class="order-id" id="orderId">-</span></p>
+        <p>Klik tombol di bawah untuk melanjutkan ke halaman pembayaran Midtrans.</p>
+      </div>
 
-    <script>
-      const API_BASE_URL = 'http://127.0.0.1:8000';
-      const token = localStorage.getItem('authToken');
-      const userDataStr = localStorage.getItem('userData');
+      <button class="btn-pesan" id="btnPesan">
+        <span class="btn-text">Bayar Sekarang</span>
+        <i class="bi bi-arrow-repeat spinner"></i>
+      </button>
+    </section>
 
-      document.addEventListener('DOMContentLoaded', function() {
-        if (!token) {
-          alert("Anda harus login untuk memesan.");
+    <!-- No Order Data State -->
+    <section class="card no-order-data" id="noOrderData" style="display: none;">
+      <i class="bi bi-exclamation-triangle"></i>
+      <h2>Data Pesanan Tidak Ditemukan</h2>
+      <p>Silakan pilih event dan lakukan pemesanan terlebih dahulu.</p>
+      <a href="dashboard_new.html" class="btn-back">Kembali ke Dashboard</a>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="copyright">© 2024 EventKu. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // ==================================================
+    // KONFIGURASI API
+    // ==================================================
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    // ==================================================
+    // CEK AUTENTIKASI
+    // ==================================================
+    const token = localStorage.getItem('authToken');
+    const userDataStr = localStorage.getItem('userData');
+
+    if (!token) {
+      alert("Sesi habis atau belum login. Silakan login kembali.");
+      window.location.href = "login.html";
+    }
+
+    let userData = null;
+    if (userDataStr) {
+      try {
+        userData = JSON.parse(userDataStr);
+      } catch (e) {
+        console.error("Gagal parsing data user", e);
+      }
+    }
+
+    // ==================================================
+    // AMBIL DATA ORDER DARI LOCALSTORAGE
+    // ==================================================
+    const orderDataStr = localStorage.getItem('orderData');
+    let orderData = null;
+
+    // ==================================================
+    // ELEMEN DOM
+    // ==================================================
+    const mainContent = document.getElementById('mainContent');
+    const noOrderData = document.getElementById('noOrderData');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingText = document.getElementById('loadingText');
+    const errorMessage = document.getElementById('errorMessage');
+    const btnPesan = document.getElementById('btnPesan');
+
+    // ==================================================
+    // FUNGSI HELPER
+    // ==================================================
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('id-ID').format(amount);
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      try {
+        const options = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+      } catch (e) {
+        return dateString;
+      }
+    }
+
+    function showLoading(text = "Memproses...") {
+      loadingText.textContent = text;
+      loadingOverlay.classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      loadingOverlay.classList.add('hidden');
+    }
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.classList.add('show');
+    }
+
+    function hideError() {
+      errorMessage.classList.remove('show');
+    }
+
+    // ==================================================
+    // RENDER DATA ORDER
+    // ==================================================
+    function renderOrderData(data) {
+      // Event Title
+      document.getElementById('eventTitle').textContent = data.eventName || 'Event';
+
+      // Booking Code (jika sudah ada)
+      if (data.bookingCode) {
+        const bookingCodeEl = document.getElementById('bookingCode');
+        bookingCodeEl.textContent = data.bookingCode;
+        bookingCodeEl.style.display = 'inline-block';
+      }
+
+      // Status Badge
+      if (data.status) {
+        const statusBadge = document.getElementById('statusBadge');
+        statusBadge.textContent = data.status.charAt(0).toUpperCase() + data.status.slice(1);
+        statusBadge.className = `status-badge status-${data.status}`;
+        statusBadge.style.display = 'inline-block';
+      }
+
+      // Location
+      const locationEl = document.getElementById('eventLocation');
+      locationEl.innerHTML = `
+          <strong>${data.location || '-'}</strong><br />
+          ${data.address || '-'}<br />
+          <span class="ticket-info">${data.quantity || 1} Tiket • Pax ${data.quantity || 1}</span>
+        `;
+
+      // Date
+      const eventDateEl = document.getElementById('eventDate');
+      eventDateEl.textContent = formatDate(data.startDate);
+
+      // Pre-fill form with user data
+      if (userData) {
+        document.getElementById('customerName').value = userData.username || '';
+        document.getElementById('customerEmail').value = userData.email || '';
+        document.getElementById('customerPhone').value = userData.phone || '';
+      }
+
+      // Prices
+      const quantity = data.quantity || 1;
+      const pricePerTicket = parseFloat(data.pricePerTicket) || 0;
+      const ticketTotal = pricePerTicket * quantity;
+      const serviceFee = parseFloat(data.serviceFee) || 2000;
+      const grandTotal = parseFloat(data.grandTotal) || (ticketTotal + serviceFee);
+
+      document.getElementById('ticket-price-item').innerHTML = `
+          <span>Tiket ${quantity} (Pax)</span>
+          <span>IDR ${formatCurrency(ticketTotal)}</span>
+        `;
+
+      document.getElementById('serviceFeeDisplay').textContent = `IDR ${formatCurrency(serviceFee)}`;
+      document.getElementById('totalAmountDisplay').textContent = `IDR ${formatCurrency(grandTotal)}`;
+
+      // Payment Info (jika sudah ada bookingId)
+      if (data.bookingId) {
+        const paymentInfo = document.getElementById('paymentInfo');
+        paymentInfo.style.display = 'block';
+
+        if (data.orderId) {
+          document.getElementById('orderId').textContent = data.orderId;
+        }
+      }
+    }
+
+    // ==================================================
+    // FUNGSI PROSES PEMBAYARAN
+    // Endpoint: POST /api/bookings/{id}/pay
+    // ==================================================
+    async function processPayment() {
+      hideError();
+
+      // Validasi form
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const gender = document.querySelector('input[name="gender"]:checked').value;
+
+      if (!customerName || !customerPhone || !customerEmail) {
+        showError('Mohon lengkapi semua data pemesanan!');
+        return;
+      }
+
+      // Validasi email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(customerEmail)) {
+        showError('Format email tidak valid!');
+        return;
+      }
+
+      // Validasi phone
+      const phoneRegex = /^[0-9]{10,15}$/;
+      if (!phoneRegex.test(customerPhone.replace(/[-\s]/g, ''))) {
+        showError('Format nomor handphone tidak valid!');
+        return;
+      }
+
+      // Cek apakah ada bookingId
+      if (!orderData || !orderData.bookingId) {
+        showError('Data booking tidak ditemukan. Silakan ulangi pemesanan.');
+        return;
+      }
+
+      // Set loading state
+      btnPesan.disabled = true;
+      btnPesan.classList.add('loading');
+      showLoading('Menghubungi gateway pembayaran...');
+
+      try {
+        // Call payment API
+        // Endpoint: POST /api/bookings/{id}/pay
+        const payUrl = `${API_BASE_URL}/api/bookings/${orderData.bookingId}/pay`;
+        console.log("Calling Payment API:", payUrl);
+
+        const response = await fetch(payUrl, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            customer_name: customerName,
+            customer_email: customerEmail,
+            customer_phone: customerPhone,
+            gender: gender
+          })
+        });
+
+        // Handle unauthorized
+        if (response.status === 401) {
+          localStorage.clear();
+          alert("Sesi Anda telah berakhir. Silakan login kembali.");
           window.location.href = "login.html";
           return;
         }
 
-        // Prefill Form dari Data User Login
-        if (userDataStr) {
-            try {
-                const user = JSON.parse(userDataStr);
-                document.getElementById('userAvatar').src = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
-                if(user.username) document.getElementById('inputName').value = user.username;
-                if(user.email) document.getElementById('inputEmail').value = user.email;
-            } catch (e) {}
+        const result = await response.json();
+        console.log("Payment API Response:", result);
+
+        if (response.ok && result.data) {
+          // Ambil data transaction
+          const transaction = result.data.transaction;
+          const booking = result.data.booking;
+          const paymentUrl = result.links?.redirect_to_payment || transaction?.payment_url;
+
+          if (paymentUrl) {
+            // Update orderData dengan info transaksi
+            orderData.orderId = transaction?.order_id;
+            orderData.transactionId = transaction?.id;
+            orderData.midtransToken = transaction?.midtrans_token;
+            orderData.paymentUrl = paymentUrl;
+            orderData.status = booking?.status || 'pending';
+
+            localStorage.setItem('orderData', JSON.stringify(orderData));
+
+            showLoading('Mengalihkan ke halaman pembayaran Midtrans...');
+
+            // Redirect ke Midtrans payment page
+            setTimeout(() => {
+              window.location.href = paymentUrl;
+            }, 1000);
+
+          } else {
+            hideLoading();
+            showError('URL pembayaran tidak ditemukan. Silakan coba lagi.');
+          }
+
+        } else {
+          hideLoading();
+          const errorMsg = result.message || result.error || 'Gagal memproses pembayaran';
+          showError(errorMsg);
         }
 
-        // Ambil Data Event dari LocalStorage (Diset saat klik di Dashboard)
-        const orderDataStr = localStorage.getItem('orderData');
-        if (!orderDataStr) {
-            alert("Data pemesanan tidak ditemukan.");
-            window.location.href = "dashboard_new.html";
-            return;
-        }
+      } catch (error) {
+        console.error("Payment Error:", error);
+        hideLoading();
+        showError(`Terjadi kesalahan: ${error.message}`);
+      } finally {
+        btnPesan.disabled = false;
+        btnPesan.classList.remove('loading');
+      }
+    }
 
-        const data = JSON.parse(orderDataStr);
-        renderOrderDetails(data);
+    // ==================================================
+    // INIT
+    // ==================================================
+    document.addEventListener('DOMContentLoaded', function () {
+      // Cek apakah ada order data
+      if (!orderDataStr) {
+        mainContent.style.display = 'none';
+        noOrderData.style.display = 'block';
+        return;
+      }
 
-        // Listener Tombol Pesan
-        document.getElementById('submitBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            submitBooking(data);
-        });
+      try {
+        orderData = JSON.parse(orderDataStr);
+        console.log("Order Data:", orderData);
+
+        // Render data
+        renderOrderData(orderData);
+
+      } catch (e) {
+        console.error("Error parsing order data:", e);
+        mainContent.style.display = 'none';
+        noOrderData.style.display = 'block';
+        return;
+      }
+
+      // Event listener untuk tombol Bayar
+      btnPesan.addEventListener('click', function (e) {
+        e.preventDefault();
+        processPayment();
       });
+    });
+  </script>
+</body>
 
-      function renderOrderDetails(data) {
-          document.getElementById('eventName').textContent = data.eventName;
-          document.getElementById('eventLocationDisplay').innerHTML = `
-            <strong>${data.location}</strong><br />${data.address || ''}<br />
-            <span class="ticket-info">${data.quantity} Tiket • Pax ${data.quantity}</span>
-          `;
-          document.getElementById('eventDateDisplay').textContent = data.date;
-          
-          const totalPriceTickets = data.pricePerTicket * data.quantity;
-          document.getElementById('ticket-price-item').innerHTML = `
-            <span>Tiket ${data.quantity} (Pax)</span>
-            <span>IDR ${totalPriceTickets.toLocaleString('id-ID')}</span>
-          `;
-          
-          const totalWithFee = totalPriceTickets + 2000;
-          document.getElementById('totalAmountDisplay').textContent = `IDR ${totalWithFee.toLocaleString('id-ID')}`;
-      }
-
-      // --- LOGIKA UTAMA FETCHING API (2 STEP) ---
-      async function submitBooking(orderData) {
-          const btn = document.getElementById('submitBtn');
-          const nama = document.getElementById('inputName').value.trim();
-          const telp = document.getElementById('inputPhone').value.trim();
-          const email = document.getElementById('inputEmail').value.trim();
-          const gender = document.querySelector('input[name="gender"]:checked').value;
-
-          if (!nama || !telp || !email) {
-            alert('Mohon lengkapi semua data!');
-            return;
-          }
-
-          // Payload disesuaikan dengan BookingController Laravel Anda
-          const payload = {
-              event_id: parseInt(orderData.eventId),
-              quantity: parseInt(orderData.quantity),
-              customer_name: nama,
-              customer_phone: telp,
-              customer_email: email,
-              gender: gender // Value: "Laki-Laki" atau "Perempuan"
-          };
-
-          try {
-              // 1. UI Loading State
-              btn.disabled = true;
-              btn.innerHTML = `<span class="loading-spinner"></span> Membuat Pesanan...`;
-
-              // 2. Request PERTAMA: Buat Booking (POST /api/bookings)
-              const response = await fetch(`${API_BASE_URL}/api/bookings`, {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json',
-                      'Authorization': `Bearer ${token}`
-                  },
-                  body: JSON.stringify(payload)
-              });
-
-              const result = await response.json();
-
-              if (!response.ok) {
-                  // Handle Error Validasi dari Laravel
-                  let errMsg = result.message || "Gagal membuat pesanan.";
-                  if (result.errors) {
-                      errMsg += "\n" + Object.values(result.errors).map(e => `- ${e[0]}`).join("\n");
-                  }
-                  throw new Error(errMsg);
-              }
-
-              // Ambil ID Booking dari response
-              const bookingId = result.data?.id || result.data?.booking?.id;
-              
-              if (!bookingId) {
-                  throw new Error("ID Booking tidak ditemukan. Cek respon server.");
-              }
-
-              // 3. Request KEDUA: Minta Link Bayar (POST /api/bookings/{id}/pay)
-              btn.innerHTML = `<span class="loading-spinner"></span> Menyiapkan Pembayaran...`;
-              
-              const payResponse = await fetch(`${API_BASE_URL}/api/bookings/${bookingId}/pay`, {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/json',
-                      'Accept': 'application/json',
-                      'Authorization': `Bearer ${token}`
-                  }
-              });
-
-              const payResult = await payResponse.json();
-
-              if (!payResponse.ok) {
-                  throw new Error(payResult.message || "Gagal request ke Midtrans.");
-              }
-
-              // 4. Ambil Link & Redirect
-              let paymentUrl = null;
-              if (payResult.links && payResult.links.redirect_to_payment) {
-                  paymentUrl = payResult.links.redirect_to_payment;
-              } else if (payResult.data && payResult.data.transaction && payResult.data.transaction.payment_url) {
-                  paymentUrl = payResult.data.transaction.payment_url;
-              }
-
-              if (paymentUrl) {
-                  alert(`Pesanan berhasil! Mengarahkan ke pembayaran...`);
-                  localStorage.removeItem('orderData'); // Bersihkan cart
-                  window.location.href = paymentUrl;    // Redirect ke Midtrans
-              } else {
-                  throw new Error("Link pembayaran tidak ditemukan.");
-              }
-
-          } catch (error) {
-              alert(error.message);
-              console.error(error);
-          } finally {
-              // Reset Tombol
-              btn.disabled = false;
-              btn.innerHTML = 'Pesan';
-          }
-      }
-    </script>
-  </body>
 </html>

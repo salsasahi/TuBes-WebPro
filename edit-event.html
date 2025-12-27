@@ -1,73 +1,756 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Event | EventKu Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="eo.css">
+    <style>
+        .upload-box {
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .upload-box:hover {
+            border-color: #4A90E2;
+            background: #f0f7ff;
+        }
+
+        .upload-box.dragover {
+            border-color: #4A90E2;
+            background: #e8f4fc;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .admin-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9ca3af, #6b7280);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .form-section {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+        }
+
+        .form-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            flex-direction: column;
+        }
+
+        .loading-overlay.hidden {
+            display: none;
+        }
+
+        .error-alert {
+            display: none;
+        }
+
+        .error-alert.show {
+            display: block;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .preview-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .current-image {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+    </style>
 </head>
+
 <body class="bg-light">
-    <div class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 p-4">
-                    <h2 class="fw-bold mb-4">Edit Event</h2>
-                    <form id="editEventForm">
-                        <div class="mb-3">
-                            <label for="eventName" class="form-label fw-semibold">Nama Event</label>
-                            <input type="text" id="eventName" class="form-control" value="Tech Conference 2024" required>
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="eventDate" class="form-label fw-semibold">Tanggal Event</label>
-                            <input type="date" id="eventDate" class="form-control" value="2024-12-15" required>
-                        </div>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay hidden" id="loadingOverlay">
+        <div class="spinner-border text-light mb-3" role="status"></div>
+        <p id="loadingText">Memuat data...</p>
+    </div>
 
-                        <div class="mb-3">
-                            <label for="eventCategory" class="form-label fw-semibold">Kategori Event</label>
-                            <input type="text" id="eventCategory" class="form-control" value="Technology" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="eventParticipants" class="form-label fw-semibold">Kuota Peserta</label>
-                            <input type="number" id="eventParticipants" class="form-control" value="300" required>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="eventStatus" class="form-label fw-semibold">Status Event</label>
-                            <select id="eventStatus" class="form-select">
-                                <option value="Active" selected>Active</option>
-                                <option value="Completed">Completed</option>
-                            </select>
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary w-100">Simpan Perubahan</button>
-                            <a href="eo.html" class="btn btn-light w-100">Batal</a>
-                        </div>
-                    </form>
+    <!-- Navbar -->
+    <nav class="navbar navbar-light bg-white shadow-sm px-4">
+        <a class="navbar-brand d-flex align-items-center" href="eo.html">
+            <i class="bi bi-calendar-event fs-4 text-primary me-2"></i>
+            <span class="fw-semibold">EventKu Admin</span>
+        </a>
+        <div class="d-flex align-items-center">
+            <div class="d-flex align-items-center">
+                <div class="admin-avatar me-2">
+                    <i class="bi bi-person"></i>
                 </div>
+                <span class="fw-medium" id="adminName">Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container py-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="eo.html">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="eo.html">Events</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Event</li>
+            </ol>
+        </nav>
+
+        <!-- Title -->
+        <div class="mb-4">
+            <h3 class="fw-semibold">Edit Event</h3>
+            <p class="text-muted">Perbarui informasi event di bawah ini</p>
+        </div>
+
+        <!-- Error Alert -->
+        <div class="alert alert-danger error-alert" id="errorAlert">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span id="errorMessage">Terjadi kesalahan</span>
+        </div>
+
+        <!-- Card Form -->
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+                <form id="editEventForm" enctype="multipart/form-data">
+
+                    <!-- Informasi Dasar -->
+                    <div class="form-section">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-info-circle me-2"></i>Informasi Dasar</h6>
+                        <p class="text-muted small">Ubah informasi dasar tentang event</p>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Nama Event</label>
+                            <input type="text" class="form-control" id="title" name="title"
+                                placeholder="Masukkan judul event">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Deskripsi Event</label>
+                            <textarea class="form-control" id="description" name="description" rows="4"
+                                placeholder="Masukkan deskripsi lengkap event"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Kategori Event</label>
+                                <select class="form-select" id="category_id" name="category_id">
+                                    <option value="" disabled>Pilih kategori event</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tanggal & Lokasi -->
+                    <div class="form-section">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-calendar-event me-2"></i>Tanggal & Lokasi</h6>
+                        <p class="text-muted small">Tentukan waktu dan tempat pelaksanaan event</p>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Tanggal & Waktu Mulai</label>
+                                <input type="datetime-local" class="form-control" id="start_date" name="start_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Tanggal & Waktu Selesai</label>
+                                <input type="datetime-local" class="form-control" id="end_date" name="end_date">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Lokasi Event</label>
+                            <input type="text" class="form-control" id="location" name="location"
+                                placeholder="Contoh: Jakarta Convention Center">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Alamat Lengkap</label>
+                            <input type="text" class="form-control" id="address" name="address"
+                                placeholder="Contoh: Jl. Gatot Subroto No.1, Jakarta">
+                        </div>
+                    </div>
+
+                    <!-- Harga & Kuota -->
+                    <div class="form-section">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-cash me-2"></i>Harga & Kuota</h6>
+                        <p class="text-muted small">Tentukan harga tiket dan jumlah maksimal peserta</p>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Harga Tiket (IDR)</label>
+                                <input type="number" class="form-control" id="price" name="price"
+                                    placeholder="0 untuk gratis" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-medium">Kuota Peserta</label>
+                                <input type="number" class="form-control" id="max_participants" name="max_participants"
+                                    placeholder="Masukkan jumlah maksimal peserta" min="1">
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured">
+                            <label class="form-check-label" for="is_featured">
+                                Jadikan event ini sebagai <strong>Featured Event</strong>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Upload Gambar -->
+                    <div class="form-section">
+                        <h6 class="fw-semibold mb-3"><i class="bi bi-image me-2"></i>Gambar Event</h6>
+                        <p class="text-muted small">Upload gambar baru atau ubah URL gambar (PNG, JPG, JPEG, GIF - max
+                            2MB)</p>
+
+                        <!-- Current Image Preview -->
+                        <div class="mb-3" id="currentImageContainer" style="display: none;">
+                            <label class="form-label fw-medium">Gambar Saat Ini</label>
+                            <div>
+                                <img id="currentImage" class="current-image" src="" alt="Current Image">
+                            </div>
+                        </div>
+
+                        <div class="upload-box text-center p-5" id="uploadBox">
+                            <i class="bi bi-cloud-arrow-up fs-1 text-secondary mb-3" id="uploadIcon"></i>
+                            <p class="text-muted mb-2" id="uploadText">Drag & drop gambar baru di sini atau</p>
+                            <label class="text-primary fw-semibold" style="cursor: pointer;">
+                                Pilih File
+                                <input type="file" class="d-none" id="imageInput" name="image"
+                                    accept="image/jpeg,image/png,image/jpg,image/gif">
+                            </label>
+                            <p class="text-muted small mt-2">PNG, JPG, JPEG, GIF (max 2MB)</p>
+
+                            <div class="preview-container" id="previewContainer" style="display: none;">
+                                <img id="imagePreview" class="image-preview" src="" alt="Preview">
+                                <button type="button" class="remove-image-btn" id="removeImageBtn" title="Hapus gambar">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label fw-medium">Atau masukkan URL Gambar</label>
+                            <input type="url" class="form-control" id="image_url" name="image_url"
+                                placeholder="https://example.com/image.jpg">
+                            <small class="text-muted">Jika mengupload file baru, URL gambar akan diabaikan</small>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-flex justify-content-end gap-2 pt-3">
+                        <a href="eo.html" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-lg me-1"></i> Batal
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <i class="bi bi-save me-2"></i> Simpan Perubahan
+                        </button>
+                    </div>
+
+                </form>
             </div>
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('editEventForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        // ==================================================
+        // KONFIGURASI API
+        // ==================================================
+        const API_BASE_URL = 'http://127.0.0.1:8000';
 
-            const dataYangDiedit = {
-                nama: document.getElementById('eventName').value,
-                tanggal: document.getElementById('eventDate').value,
-                kategori: document.getElementById('eventCategory').value,
-                kuota: document.getElementById('eventParticipants').value,
-                status: document.getElementById('eventStatus').value
+        // ==================================================
+        // CEK AUTENTIKASI & ROLE ADMIN
+        // ==================================================
+        const token = localStorage.getItem('authToken');
+        const userDataStr = localStorage.getItem('userData');
+
+        if (!token) {
+            alert("Sesi habis atau belum login. Silakan login kembali.");
+            window.location.href = "login.html";
+        }
+
+        // Check if user is admin
+        let userData = null;
+        if (userDataStr) {
+            try {
+                userData = JSON.parse(userDataStr);
+                document.getElementById('adminName').textContent = userData.username || 'Admin';
+
+                // Verify admin role
+                if (userData.role !== 'admin') {
+                    alert("Akses ditolak. Halaman ini hanya untuk Admin.");
+                    window.location.href = "dashboard_new.html";
+                }
+            } catch (e) {
+                console.error("Error parsing user data:", e);
+                alert("Terjadi kesalahan. Silakan login kembali.");
+                window.location.href = "login.html";
+            }
+        } else {
+            // If no userData, redirect to login
+            alert("Data pengguna tidak ditemukan. Silakan login kembali.");
+            window.location.href = "login.html";
+        }
+
+        // ==================================================
+        // GET EVENT ID FROM URL
+        // ==================================================
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('id');
+
+        if (!eventId) {
+            alert("ID Event tidak ditemukan.");
+            window.location.href = "eo.html";
+        }
+
+        // ==================================================
+        // ELEMEN DOM
+        // ==================================================
+        const editEventForm = document.getElementById('editEventForm');
+        const categorySelect = document.getElementById('category_id');
+        const imageInput = document.getElementById('imageInput');
+        const uploadBox = document.getElementById('uploadBox');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const uploadIcon = document.getElementById('uploadIcon');
+        const uploadText = document.getElementById('uploadText');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingText = document.getElementById('loadingText');
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessage = document.getElementById('errorMessage');
+        const currentImageContainer = document.getElementById('currentImageContainer');
+        const currentImage = document.getElementById('currentImage');
+
+        let selectedFile = null;
+        let originalEventData = null;
+
+        // ==================================================
+        // FUNGSI HELPER
+        // ==================================================
+        function showLoading(text = "Memuat data...") {
+            loadingText.textContent = text;
+            loadingOverlay.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.add('hidden');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorAlert.classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function hideError() {
+            errorAlert.classList.remove('show');
+        }
+
+        function formatDateTimeLocal(dateString) {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                // Format: YYYY-MM-DDTHH:MM
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const hours = String(date.getHours()).padStart(2, '0');
+                const minutes = String(date.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        // ==================================================
+        // FETCH CATEGORIES
+        // Endpoint: GET /api/categories
+        // ==================================================
+        async function fetchCategories() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/categories`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+
+                const result = await response.json();
+                console.log("Categories Response:", result);
+
+                if (result.success && result.data && result.data.categories) {
+                    result.data.categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.id;
+                        option.textContent = cat.name;
+                        categorySelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        }
+
+        // ==================================================
+        // FETCH EVENT DATA
+        // Endpoint: GET /api/events/{id}
+        // ==================================================
+        async function fetchEventData() {
+            showLoading("Memuat data event...");
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.status === 401) {
+                    localStorage.clear();
+                    alert("Sesi Anda telah berakhir. Silakan login kembali.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                if (response.status === 404) {
+                    alert("Event tidak ditemukan.");
+                    window.location.href = "eo.html";
+                    return;
+                }
+
+                const result = await response.json();
+                console.log("Event Data Response:", result);
+
+                if (result.success && result.data) {
+                    originalEventData = result.data;
+                    populateForm(result.data);
+                } else if (result.data) {
+                    originalEventData = result.data;
+                    populateForm(result.data);
+                } else {
+                    showError("Gagal memuat data event.");
+                }
+
+                hideLoading();
+            } catch (error) {
+                console.error("Error fetching event:", error);
+                hideLoading();
+                showError(`Terjadi kesalahan: ${error.message}`);
+            }
+        }
+
+        // ==================================================
+        // POPULATE FORM WITH EVENT DATA
+        // ==================================================
+        function populateForm(event) {
+            // Basic Info
+            document.getElementById('title').value = event.title || '';
+            document.getElementById('description').value = event.description || '';
+
+            // Category - will be set after categories are loaded
+            if (event.category_id) {
+                categorySelect.value = event.category_id;
+            }
+
+            // Status
+            if (event.status) {
+                document.getElementById('status').value = event.status;
+            }
+
+            // Dates
+            document.getElementById('start_date').value = formatDateTimeLocal(event.start_date);
+            document.getElementById('end_date').value = formatDateTimeLocal(event.end_date);
+
+            // Location
+            document.getElementById('location').value = event.location || '';
+            document.getElementById('address').value = event.address || '';
+
+            // Price & Quota
+            document.getElementById('price').value = event.price || 0;
+            document.getElementById('max_participants').value = event.max_participants || '';
+
+            // Featured
+            document.getElementById('is_featured').checked = event.is_featured == 1 || event.is_featured === true;
+
+            // Image URL
+            document.getElementById('image_url').value = event.image_url || '';
+
+            // Show current image if exists
+            if (event.image_url) {
+                const imageUrl = event.image_url.startsWith('http')
+                    ? event.image_url
+                    : `${API_BASE_URL}${event.image_url}`;
+                currentImage.src = imageUrl;
+                currentImageContainer.style.display = 'block';
+            }
+        }
+
+        // ==================================================
+        // IMAGE UPLOAD HANDLING
+        // ==================================================
+        function handleFileSelect(file) {
+            if (!file) return;
+
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                showError('Tipe file tidak valid. Hanya JPEG, PNG, JPG, dan GIF yang diperbolehkan.');
+                return;
+            }
+
+            // Validate file size (max 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                showError('Ukuran file terlalu besar. Maksimal 2MB.');
+                return;
+            }
+
+            selectedFile = file;
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                previewContainer.style.display = 'inline-block';
+                uploadIcon.style.display = 'none';
+                uploadText.style.display = 'none';
             };
+            reader.readAsDataURL(file);
 
-            localStorage.setItem('dataEventTerbaru', JSON.stringify(dataYangDiedit));
+            hideError();
+        }
 
-            window.location.href = 'eo.html';
+        // File input change
+        imageInput.addEventListener('change', function (e) {
+            if (e.target.files && e.target.files[0]) {
+                handleFileSelect(e.target.files[0]);
+            }
+        });
+
+        // Remove image button
+        removeImageBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            selectedFile = null;
+            imageInput.value = '';
+            imagePreview.src = '';
+            previewContainer.style.display = 'none';
+            uploadIcon.style.display = 'block';
+            uploadText.style.display = 'block';
+        });
+
+        // Drag and drop
+        uploadBox.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', function (e) {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+
+            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                handleFileSelect(e.dataTransfer.files[0]);
+            }
+        });
+
+        // ==================================================
+        // SUBMIT FORM - UPDATE EVENT
+        // Endpoint: PUT /api/events/{id}
+        // ==================================================
+        editEventForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            hideError();
+
+            showLoading('Menyimpan perubahan...');
+
+            try {
+                // Build FormData - only include fields that have values
+                const formData = new FormData();
+
+                // Title
+                const title = document.getElementById('title').value.trim();
+                if (title) formData.append('title', title);
+
+                // Description
+                const description = document.getElementById('description').value;
+                if (description !== undefined) formData.append('description', description);
+
+                // Category
+                const category_id = document.getElementById('category_id').value;
+                if (category_id) formData.append('category_id', category_id);
+
+                // Dates
+                const start_date = document.getElementById('start_date').value;
+                if (start_date) formData.append('start_date', start_date);
+
+                const end_date = document.getElementById('end_date').value;
+                if (end_date) formData.append('end_date', end_date);
+
+                // Validate dates if both provided
+                if (start_date && end_date && new Date(end_date) < new Date(start_date)) {
+                    hideLoading();
+                    showError('Tanggal selesai harus setelah atau sama dengan tanggal mulai');
+                    return;
+                }
+
+                // Location
+                const location = document.getElementById('location').value.trim();
+                if (location) formData.append('location', location);
+
+                // Address
+                const address = document.getElementById('address').value;
+                if (address !== undefined) formData.append('address', address);
+
+                // Price
+                const price = document.getElementById('price').value;
+                if (price !== '') formData.append('price', price);
+
+                // Max Participants
+                const max_participants = document.getElementById('max_participants').value;
+                if (max_participants) formData.append('max_participants', max_participants);
+
+                // Status
+                const status = document.getElementById('status').value;
+                if (status) formData.append('status', status);
+
+                // Featured
+                formData.append('is_featured', document.getElementById('is_featured').checked ? 1 : 0);
+
+                // Add image file if selected
+                if (selectedFile) {
+                    formData.append('image', selectedFile);
+                } else {
+                    // Use image URL if provided and no file selected
+                    const imageUrl = document.getElementById('image_url').value.trim();
+                    if (imageUrl) {
+                        formData.append('image_url', imageUrl);
+                    }
+                }
+
+                // For PUT request with FormData, we need to use POST with _method
+                formData.append('_method', 'PUT');
+
+                console.log("Updating event...");
+
+                const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+                    method: 'POST', // Using POST with _method=PUT for FormData
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                // Handle unauthorized
+                if (response.status === 401) {
+                    localStorage.clear();
+                    alert("Sesi Anda telah berakhir. Silakan login kembali.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const result = await response.json();
+                console.log("Update Event Response:", result);
+
+                if (response.ok && (result.success || result.data)) {
+                    hideLoading();
+                    alert('Event berhasil diperbarui!');
+                    window.location.href = 'eo.html';
+                } else {
+                    hideLoading();
+
+                    // Handle validation errors
+                    if (result.errors) {
+                        const errorMessages = Object.values(result.errors).flat().join('\n');
+                        showError(errorMessages);
+                    } else {
+                        showError(result.message || 'Gagal menyimpan perubahan');
+                    }
+                }
+
+            } catch (error) {
+                console.error("Update Event Error:", error);
+                hideLoading();
+                showError(`Terjadi kesalahan: ${error.message}`);
+            }
+        });
+
+        // ==================================================
+        // INIT
+        // ==================================================
+        document.addEventListener('DOMContentLoaded', async function () {
+            // First fetch categories, then fetch event data
+            await fetchCategories();
+            await fetchEventData();
+
+            // Set category value after both are loaded
+            if (originalEventData && originalEventData.category_id) {
+                categorySelect.value = originalEventData.category_id;
+            }
         });
     </script>
+
 </body>
+
 </html>

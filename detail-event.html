@@ -1,37 +1,99 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Detail Event - EventKu</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
   <link rel="stylesheet" href="detail.css" />
 
   <style>
-    /* Loading Overlay */
-    #loadingOverlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,0.95);
-        display: flex; flex-direction: column;
-        justify-content: center; align-items: center;
-        z-index: 9999; font-family: 'Poppins', sans-serif;
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      font-size: 1.2rem;
+      color: #666;
     }
-    .hidden { display: none !important; }
+
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 400px;
+      color: #dc3545;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .error-container i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .error-container .btn-back {
+      margin-top: 20px;
+      padding: 10px 25px;
+      background: #4A90E2;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: 0.3s;
+    }
+
+    .error-container .btn-back:hover {
+      background: #357ABD;
+    }
+
+    .tag.status-active {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+    }
+
+    .tag.status-soldout {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+    }
+
+    .tag.status-ended {
+      background: linear-gradient(135deg, #6c757d, #5a6268);
+      color: white;
+    }
+
+    .ticket-counter button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn.order:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: #ccc;
+    }
+
+    .booking-loading {
+      display: none;
+      margin-left: 10px;
+    }
+
+    .booking-loading.show {
+      display: inline-block;
+    }
   </style>
+
 </head>
+
 <body>
-
-  <div id="loadingOverlay">
-      <i class="fas fa-spinner fa-spin fa-3x" style="color: #4A90E2; margin-bottom: 20px;"></i>
-      <h3 style="color: #333;">Memuat Event...</h3>
-  </div>
-
   <header class="navbar">
     <div class="nav-left">
       <a href="dashboard_new.html" class="back-btn">
-        <i class="fas fa-arrow-left"></i> Kembali ke Dashboard
+        <i class="fas fa-arrow-left"></i> Detail Event
       </a>
     </div>
     <div class="nav-right">
@@ -41,305 +103,532 @@
     </div>
   </header>
 
-  <main class="event-container" id="mainContent" style="visibility: hidden;">
-    <div class="event-banner">
-      <img id="eventBanner" src="" alt="Event Banner" onerror="this.onerror=null; this.src='tech.jpg';"/>
+  <main class="event-container" id="mainContainer">
+    <!-- Loading State -->
+    <div class="loading-container" id="loadingState">
+      <i class="fas fa-spinner fa-spin"></i>&nbsp; Memuat detail event...
     </div>
 
-    <div class="event-detail-card">
-      <div class="event-tags">
-        <span class="tag blue" id="eventCategory">Category</span>
-        <span class="tag green" id="eventStatus">Available</span>
+    <!-- Error State -->
+    <div class="error-container" id="errorState" style="display: none;">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h2>Gagal Memuat Event</h2>
+      <p id="errorMessage">Terjadi kesalahan saat memuat data event.</p>
+      <a href="dashboard_new.html" class="btn-back">Kembali ke Dashboard</a>
+    </div>
+
+    <!-- Event Content (Hidden until loaded) -->
+    <div id="eventContent" style="display: none;">
+      <div class="event-banner">
+        <img id="eventBanner" src="https://via.placeholder.com/800x400?text=Event+Banner" alt="Event Banner" />
       </div>
 
-      <h1 class="event-title" id="eventTitle">Loading...</h1>
-      
-      <p class="event-subtitle" id="eventDescriptionShort">Loading description...</p>
+      <div class="event-detail-card">
+        <div class="event-tags">
+          <span class="tag blue" id="categoryTag">Kategori</span>
+          <span class="tag" id="statusTag">Status</span>
+        </div>
 
-      <div class="event-details-grid">
-        <div class="details-left">
-          <div class="info-block">
-            <i class="far fa-calendar-alt"></i>
-            <div>
-              <h4>Date & Time</h4>
-              <p id="eventDateTime">-</p>
-            </div>
-          </div>
+        <h1 class="event-title" id="eventTitle">Nama Event</h1>
+        <p class="event-subtitle" id="eventDescription">
+          Deskripsi event akan ditampilkan di sini...
+        </p>
 
-          <div class="info-block">
-            <i class="fas fa-map-marker-alt"></i>
-            <div>
-              <h4>Location</h4>
-              <p id="eventLocation">-</p>
-            </div>
-          </div>
-
-          <div class="info-block">
-            <i class="fas fa-users"></i>
-            <div>
-              <h4>Participants</h4>
-              <p id="eventQuotaInfo">0 / 0 registered</p>
-              <div class="participant-bar">
-                <div class="participant-progress" id="quotaProgress" style="width: 0%"></div>
+        <div class="event-details-grid">
+          <div class="details-left">
+            <div class="info-block">
+              <i class="far fa-calendar-alt"></i>
+              <div>
+                <h4>Date & Time</h4>
+                <p id="eventDateTime">Loading...</p>
               </div>
             </div>
+
+            <div class="info-block">
+              <i class="fas fa-map-marker-alt"></i>
+              <div>
+                <h4>Location</h4>
+                <p id="eventLocation">Loading...</p>
+              </div>
+            </div>
+
+            <div class="info-block">
+              <i class="fas fa-users"></i>
+              <div>
+                <h4>Participants</h4>
+                <p id="eventParticipants">0 / 0 registered</p>
+                <div class="participant-bar">
+                  <div class="participant-progress" id="participantProgress"></div>
+                </div>
+              </div>
+            </div>
+
           </div>
-          
+
+          <div class="details-right">
+            <div class="event-organizer">
+              <h3>Event Organizer</h3>
+              <p><strong id="organizerName">Organizer</strong></p>
+              <p><i class="fas fa-envelope"></i> <span id="organizerEmail">-</span></p>
+              <p><i class="fas fa-phone"></i> <span id="organizerPhone">-</span></p>
+            </div>
+          </div>
         </div>
 
-        <div class="details-right">
-          <div class="event-organizer">
-            <h3>Event Organizer</h3>
-            <p><strong id="organizerName">-</strong></p>
-            <p><i class="fas fa-envelope"></i> <span id="organizerEmail">-</span></p>
+
+        <section class="about-event">
+          <h3>About This Event</h3>
+          <div id="aboutEventContent">
+            <p>Deskripsi lengkap event akan ditampilkan di sini...</p>
           </div>
+        </section>
+
+        <section class="what-you-get" id="whatYouGetSection" style="display: none;">
+          <h3>What You'll Get</h3>
+          <div id="whatYouGetContent"></div>
+        </section>
+
+        <section class="ticket-quantity" id="ticketSection">
+          <h3>Jumlah Tiket</h3>
+          <div class="ticket-item">
+            <div class="ticket-info">
+              <strong>Pax</strong>
+              <span id="ticketPrice">IDR 0/pax</span>
+            </div>
+            <div class="ticket-counter">
+              <button class="counter-btn" id="decrease" aria-label="Kurangi tiket">-</button>
+              <span id="quantity">1</span>
+              <button class="counter-btn" id="increase" aria-label="Tambah tiket">+</button>
+            </div>
+          </div>
+          <p id="availableTicketsInfo" style="font-size: 0.85rem; color: #666; margin-top: 10px;">
+            <i class="fas fa-info-circle"></i> Tiket tersedia: <span id="availableCount">0</span>
+          </p>
+        </section>
+
+        <div class="order-footer">
+          <div class="total-price">
+            <span id="total-label">Total (1 pax):</span>
+            <strong id="total-price">IDR 0</strong>
+          </div>
+          <button class="btn order" id="pesanBtn">
+            Pesan Tiket
+            <i class="fas fa-spinner fa-spin booking-loading" id="bookingLoading"></i>
+          </button>
         </div>
+
       </div>
-
-      <section class="about-event">
-        <h3>About This Event</h3>
-        <p id="eventDescriptionFull" style="white-space: pre-line;">-</p>
-      </section>
-
-      <section class="what-you-get">
-        <h3>What You'll Get</h3>
-        <p id="eventBenefits" style="white-space: pre-line; line-height: 1.6;">-</p>
-      </section>
-
-      <section class="ticket-quantity">
-        <h3>Jumlah Tiket</h3>
-        <div class="ticket-item">
-          <div class="ticket-info">
-            <strong>Pax</strong>
-            <span id="priceDisplay">IDR 0</span>
-          </div>
-          <div class="ticket-counter">
-            <button class="counter-btn" id="decrease" aria-label="Kurangi tiket">-</button>
-            <span id="quantity">1</span>
-            <button class="counter-btn" id="increase" aria-label="Tambah tiket">+</button>
-          </div>
-        </div>
-      </section>
-
-      <div class="order-footer">
-        <div class="total-price">
-          <span id="total-label">Total (1 pax):</span>
-          <strong id="total-price">IDR 0</strong>
-        </div>
-        <button class="btn order" id="pesanBtn">Pesan Tiket</button>
-      </div>
-
     </div>
   </main>
 
   <footer>
-    © 2024 Event Platform. All rights reserved.
+    © 2024 EventKu. All rights reserved.
   </footer>
 
   <script>
-    // --- KONFIGURASI API ---
+    // ==================================================
+    // KONFIGURASI API
+    // ==================================================
     const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    // ==================================================
+    // CEK AUTENTIKASI
+    // ==================================================
     const token = localStorage.getItem('authToken');
+    const userDataStr = localStorage.getItem('userData');
 
-    // --- STATE VARIABLES ---
-    let currentEventData = null;
-    let ticketQuantity = 1;
+    if (!token) {
+      alert("Sesi habis atau belum login. Silakan login kembali.");
+      window.location.href = "login.html";
+    }
+
+    let userData = null;
+    if (userDataStr) {
+      try {
+        userData = JSON.parse(userDataStr);
+      } catch (e) {
+        console.error("Gagal parsing data user", e);
+      }
+    }
+
+    // ==================================================
+    // AMBIL EVENT ID DARI URL
+    // ==================================================
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('id');
+
+    if (!eventId) {
+      showError("ID Event tidak ditemukan. Silakan pilih event dari halaman dashboard.");
+    }
+
+    // ==================================================
+    // VARIABEL GLOBAL
+    // ==================================================
+    let eventData = null;
     let basePrice = 0;
+    let quantity = 1;
+    let availableTickets = 0;
 
-    // --- MAIN ---
-    document.addEventListener('DOMContentLoaded', async function() {
-      
-      if (!token) {
-        alert("Harap login terlebih dahulu.");
-        window.location.href = "login.html";
-        return;
+    // ==================================================
+    // ELEMEN DOM
+    // ==================================================
+    const loadingState = document.getElementById('loadingState');
+    const errorState = document.getElementById('errorState');
+    const eventContent = document.getElementById('eventContent');
+    const errorMessage = document.getElementById('errorMessage');
+
+    // ==================================================
+    // FUNGSI FETCH DETAIL EVENT
+    // Endpoint: GET /api/events/{id}
+    // ==================================================
+    async function fetchEventDetail() {
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/events/${eventId}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Handle unauthorized
+        if (response.status === 401) {
+          localStorage.clear();
+          alert("Sesi Anda telah berakhir. Silakan login kembali.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Event Detail Response:", result);
+
+        if (result.success && result.data) {
+          eventData = result.data;
+          renderEventDetail(eventData);
+        } else {
+          throw new Error(result.message || "Gagal memuat data event");
+        }
+
+      } catch (error) {
+        console.error("Fetch Event Detail Error:", error);
+        showError(error.message);
+      }
+    }
+
+    // ==================================================
+    // FUNGSI RENDER DETAIL EVENT
+    // ==================================================
+    function renderEventDetail(event) {
+      // Hide loading, show content
+      loadingState.style.display = 'none';
+      eventContent.style.display = 'block';
+
+      // Update page title
+      document.title = `Detail Event - ${event.title}`;
+
+      // Banner Image
+      const bannerImg = document.getElementById('eventBanner');
+      if (event.image_url) {
+        bannerImg.src = event.image_url.startsWith('http')
+          ? event.image_url
+          : `${API_BASE_URL}${event.image_url}`;
+      }
+      bannerImg.alt = event.title;
+      bannerImg.onerror = function () {
+        this.src = 'https://via.placeholder.com/800x400?text=No+Image';
+      };
+
+      // Category Tag
+      const categoryTag = document.getElementById('categoryTag');
+      if (event.category) {
+        categoryTag.innerHTML = `<i class="fas ${event.category.icon || 'fa-tag'}"></i> ${event.category.name}`;
       }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      const eventId = urlParams.get('id');
+      // Status Tag
+      const statusTag = document.getElementById('statusTag');
+      const displayStatus = event.display_status || event.status;
+      statusTag.textContent = displayStatus;
 
-      if (!eventId) {
-        document.getElementById('loadingOverlay').innerHTML = `
-            <div style="text-align:center; color: #dc3545;">
-                <i class="fas fa-exclamation-circle fa-3x"></i><br><br>
-                <h3>ID Event Tidak Ditemukan</h3>
-                <p>Silakan pilih event dari Dashboard.</p>
-                <br>
-                <a href="dashboard_new.html" style="padding: 10px 20px; background: #4A90E2; color: white; text-decoration: none; border-radius: 5px;">Kembali ke Dashboard</a>
-            </div>
+      if (displayStatus === 'Active' || event.status === 'published') {
+        statusTag.className = 'tag status-active';
+      } else if (displayStatus === 'Sold Out' || event.available_tickets === 0) {
+        statusTag.className = 'tag status-soldout';
+      } else {
+        statusTag.className = 'tag status-ended';
+      }
+
+      // Title & Description
+      document.getElementById('eventTitle').textContent = event.title;
+      document.getElementById('eventDescription').textContent = event.description || 'Tidak ada deskripsi.';
+
+      // Date & Time
+      const dateTimeEl = document.getElementById('eventDateTime');
+      const startDate = formatDate(event.start_date);
+      const endDate = formatDate(event.end_date);
+      const startTime = formatTime(event.start_date);
+      const endTime = formatTime(event.end_date);
+      dateTimeEl.innerHTML = `${startDate} <br>${startTime} – ${endTime}`;
+
+      // Location
+      const locationEl = document.getElementById('eventLocation');
+      const location = event.location || 'Online';
+      const address = event.address || '';
+      locationEl.innerHTML = address ? `${location}<br>${address}` : location;
+
+      // Participants
+      const participantsEl = document.getElementById('eventParticipants');
+      const currentParticipants = event.current_participants || 0;
+      const maxParticipants = event.max_participants || 0;
+      availableTickets = event.available_tickets || 0;
+
+      participantsEl.textContent = `${currentParticipants} / ${maxParticipants} registered`;
+
+      // Progress bar
+      const progressEl = document.getElementById('participantProgress');
+      const progressPercent = maxParticipants > 0 ? (currentParticipants / maxParticipants) * 100 : 0;
+      progressEl.style.width = `${progressPercent}%`;
+
+      // Available tickets info
+      document.getElementById('availableCount').textContent = availableTickets;
+
+      // Organizer
+      if (event.organizer) {
+        document.getElementById('organizerName').textContent = event.organizer.username || 'Organizer';
+        document.getElementById('organizerEmail').textContent = event.organizer.email || '-';
+        document.getElementById('organizerPhone').textContent = event.organizer.phone || '-';
+      }
+
+      // About Event
+      const aboutContent = document.getElementById('aboutEventContent');
+      aboutContent.innerHTML = `<p>${event.description || 'Tidak ada deskripsi lengkap.'}</p>`;
+
+      // What You'll Get (jika ada)
+      const whatYouGetSection = document.getElementById('whatYouGetSection');
+      const whatYouGetContent = document.getElementById('whatYouGetContent');
+
+      if (event.what_you_will_get) {
+        whatYouGetSection.style.display = 'block';
+        // Bisa berupa string atau array
+        if (Array.isArray(event.what_you_will_get)) {
+          whatYouGetContent.innerHTML = '<ul>' +
+            event.what_you_will_get.map(item => `<li>${item}</li>`).join('') +
+            '</ul>';
+        } else {
+          whatYouGetContent.innerHTML = `<p>${event.what_you_will_get}</p>`;
+        }
+      }
+
+      // Price
+      basePrice = parseFloat(event.price) || 0;
+      document.getElementById('ticketPrice').textContent = `IDR ${formatCurrency(basePrice)}/pax`;
+
+      // Check if tickets available
+      if (availableTickets <= 0) {
+        document.getElementById('ticketSection').innerHTML = `
+          <h3>Jumlah Tiket</h3>
+          <div class="error-msg" style="padding: 20px; text-align: center; color: #dc3545;">
+            <i class="fas fa-ticket-alt"></i> Maaf, tiket sudah habis terjual.
+          </div>
         `;
-        return;
+        document.getElementById('pesanBtn').disabled = true;
+        document.getElementById('pesanBtn').textContent = 'Tiket Habis';
       }
 
-      await fetchEventDetail(eventId);
-
-      setupEventListeners();
-    });
-
-    // --- FETCH DATA ---
-    async function fetchEventDetail(id) {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/events/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.status === 401) {
-                alert("Sesi berakhir. Silakan login kembali.");
-                window.location.href = "login.html";
-                return;
-            }
-            if (!response.ok) throw new Error("Gagal mengambil data event.");
-
-            const result = await response.json();
-            currentEventData = result.data ? result.data : result;
-
-            renderEventUI(currentEventData);
-
-            // Tampilkan konten
-            document.getElementById('loadingOverlay').classList.add('hidden');
-            document.getElementById('mainContent').style.visibility = 'visible';
-
-        } catch (error) {
-            console.error(error);
-            alert("Terjadi kesalahan: " + error.message);
-            window.location.href = "dashboard_new.html";
-        }
+      // Update total harga
+      updateBill();
     }
 
-    // --- RENDER UI ---
-    function renderEventUI(event) {
-        basePrice = Number(event.price) || 0;
-
-        // 1. Gambar
-        const bannerImg = document.getElementById('eventBanner');
-        
-        if (event.image_url) {
-            const imgUrl = event.image_url.startsWith('http') 
-                ? event.image_url 
-                : `${API_BASE_URL}${event.image_url}`;
-            bannerImg.src = imgUrl;
-        } else {
-            bannerImg.src = 'tech.jpg';
-        }   
-
-        // 2. Teks Utama
-        document.title = `Detail - ${event.title}`;
-        setText('eventTitle', event.title);
-        setText('eventCategory', event.category?.name || 'Event');
-        setText('eventDescriptionShort', event.description ? event.description.substring(0, 150) + '...' : '');
-        setText('eventDescriptionFull', event.description || '-');
-        setText('eventBenefits', event.what_you_will_get || 'No specific benefits listed.');
-
-        // 3. Tanggal & Waktu
-        const start = new Date(event.start_date);
-        const end = new Date(event.end_date);
-        const dateStr = start.toLocaleDateString('id-ID', { weekday:'long', day: 'numeric', month: 'long', year: 'numeric' });
-        const timeStr = `${formatTime(start)} - ${formatTime(end)}`;
-        
-        const dateEl = document.getElementById('eventDateTime');
-        if(dateEl) dateEl.innerHTML = `${dateStr} <br> ${timeStr} WIB`;
-
-        // 4. Lokasi
-        const locEl = document.getElementById('eventLocation');
-        if(locEl) locEl.innerHTML = `<strong>${event.location || 'Online'}</strong><br>${event.address || ''}`;
-
-        // 5. Organizer
-        if (event.organizer) {
-            setText('organizerName', event.organizer.username || event.organizer.name);
-            setText('organizerEmail', event.organizer.email);
-        }
-
-        // 6. Kuota
-        const current = event.current_participants || 0;
-        const max = event.max_participants || 100;
-        const percent = Math.min((current / max) * 100, 100);
-        
-        setText('eventQuotaInfo', `${current} / ${max} registered`);
-        document.getElementById('quotaProgress').style.width = `${percent}%`;
-
-        // Status Badge
-        const statusBadge = document.getElementById('eventStatus');
-        if (current >= max) {
-            statusBadge.textContent = "Sold Out";
-            statusBadge.style.backgroundColor = "#e74c3c";
-            
-            const btn = document.getElementById('pesanBtn');
-            btn.disabled = true;
-            btn.textContent = "Tiket Habis";
-            btn.style.backgroundColor = "#ccc";
-            btn.style.cursor = "not-allowed";
-        } else {
-            statusBadge.textContent = "Available";
-        }
-
-        updateBill();
+    // ==================================================
+    // FUNGSI FORMAT TANGGAL & WAKTU
+    // ==================================================
+    function formatDate(dateString) {
+      if (!dateString) return '-';
+      try {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+      } catch (e) {
+        return dateString;
+      }
     }
 
-    // --- UPDATE HARGA ---
+    function formatTime(dateString) {
+      if (!dateString) return '-';
+      try {
+        const options = { hour: '2-digit', minute: '2-digit' };
+        return new Date(dateString).toLocaleTimeString('id-ID', options);
+      } catch (e) {
+        return dateString;
+      }
+    }
+
+    function formatCurrency(amount) {
+      return new Intl.NumberFormat('id-ID').format(amount);
+    }
+
+    // ==================================================
+    // FUNGSI UPDATE BILL
+    // ==================================================
     function updateBill() {
-        const total = basePrice * ticketQuantity;
-        setText('quantity', ticketQuantity);
-        setText('priceDisplay', formatRupiah(basePrice) + '/pax');
-        setText('total-price', formatRupiah(total));
-        setText('total-label', `Total (${ticketQuantity} pax):`);
+      const quantityEl = document.getElementById('quantity');
+      const totalLabelEl = document.getElementById('total-label');
+      const totalPriceEl = document.getElementById('total-price');
+
+      quantityEl.textContent = quantity;
+
+      const total = basePrice * quantity;
+      totalPriceEl.textContent = `IDR ${formatCurrency(total)}`;
+      totalLabelEl.textContent = `Total (${quantity} pax):`;
+
+      // Update button states
+      const decreaseBtn = document.getElementById('decrease');
+      const increaseBtn = document.getElementById('increase');
+
+      if (decreaseBtn) decreaseBtn.disabled = quantity <= 1;
+      if (increaseBtn) increaseBtn.disabled = quantity >= availableTickets;
     }
 
-    function setupEventListeners() {
-        document.getElementById('decrease').addEventListener('click', () => {
-            if (ticketQuantity > 1) {
-                ticketQuantity--;
-                updateBill();
-            }
+    // ==================================================
+    // FUNGSI SHOW ERROR
+    // ==================================================
+    function showError(message) {
+      loadingState.style.display = 'none';
+      eventContent.style.display = 'none';
+      errorState.style.display = 'flex';
+      errorMessage.textContent = message;
+    }
+
+    // ==================================================
+    // FUNGSI BOOKING / PESAN TIKET
+    // Endpoint: POST /api/bookings
+    // ==================================================
+    async function createBooking() {
+      const pesanBtn = document.getElementById('pesanBtn');
+      const bookingLoading = document.getElementById('bookingLoading');
+
+      // Disable button & show loading
+      pesanBtn.disabled = true;
+      bookingLoading.classList.add('show');
+
+      try {
+        // Siapkan request body untuk booking
+        const bookingData = {
+          event_id: parseInt(eventId),
+          quantity: quantity,
+          customer_name: userData?.username || 'Guest',
+          customer_email: userData?.email || '',
+          customer_phone: userData?.phone || '08123456789',
+          gender: 'Laki-Laki' // Default, bisa diubah sesuai kebutuhan
+        };
+
+        console.log("Booking Request:", bookingData);
+
+        const response = await fetch(`${API_BASE_URL}/api/bookings`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(bookingData)
         });
 
-        document.getElementById('increase').addEventListener('click', () => {
-            if (currentEventData) {
-                const sisa = (currentEventData.max_participants || 100) - (currentEventData.current_participants || 0);
-                if (ticketQuantity < sisa) {
-                    ticketQuantity++;
-                    updateBill();
-                } else {
-                    alert(`Maaf, tiket tersisa hanya ${sisa}.`);
-                }
-            }
-        });
+        // Handle unauthorized
+        if (response.status === 401) {
+          localStorage.clear();
+          alert("Sesi Anda telah berakhir. Silakan login kembali.");
+          window.location.href = "login.html";
+          return;
+        }
 
-        document.getElementById('pesanBtn').addEventListener('click', () => {
-            if (!currentEventData || document.getElementById('pesanBtn').disabled) return;
+        const result = await response.json();
+        console.log("Booking Response:", result);
 
-            const orderData = {
-                eventId: currentEventData.id,
-                eventName: currentEventData.title,
-                quantity: ticketQuantity,
-                pricePerTicket: basePrice,
-                totalPrice: basePrice * ticketQuantity,
-                date: document.getElementById('eventDateTime')?.innerText.replace(/\n/g, ' ') || '',
-                location: currentEventData.location,
-                address: currentEventData.address,
-                image: document.getElementById('eventBanner')?.src
-            };
+        if (response.ok && result.data) {
+          // Simpan data booking ke localStorage untuk halaman selanjutnya
+          const orderData = {
+            bookingId: result.data.id,
+            bookingCode: result.data.booking_id,
+            eventId: eventId,
+            eventName: eventData.title,
+            quantity: quantity,
+            pricePerTicket: basePrice,
+            totalPrice: basePrice * quantity,
+            grandTotal: result.data.pricing?.grand_total || (basePrice * quantity),
+            serviceFee: result.data.pricing?.service_fee || 0,
+            location: eventData.location,
+            address: eventData.address,
+            startDate: eventData.start_date,
+            endDate: eventData.end_date,
+            status: result.data.status,
+            payLink: result.links?.pay || `/api/bookings/${result.data.id}/pay`
+          };
 
-            localStorage.setItem('orderData', JSON.stringify(orderData));
-            window.location.href = 'detail2.html';
-        });
+          localStorage.setItem('orderData', JSON.stringify(orderData));
+
+          alert(`Booking berhasil dibuat!\nKode Booking: ${result.data.booking_id}\nTotal: IDR ${formatCurrency(orderData.grandTotal)}`);
+
+          // Redirect ke halaman konfirmasi/pembayaran
+          window.location.href = 'detail2.html';
+
+        } else {
+          // Handle error dari server
+          const errorMsg = result.message || result.error || 'Gagal membuat booking';
+          alert(`Error: ${errorMsg}`);
+        }
+
+      } catch (error) {
+        console.error("Booking Error:", error);
+        alert(`Terjadi kesalahan: ${error.message}`);
+      } finally {
+        // Re-enable button & hide loading
+        pesanBtn.disabled = false;
+        bookingLoading.classList.remove('show');
+      }
     }
 
-    // --- HELPER ---
-    function setText(id, text) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = text;
-    }
-    function formatTime(d) {
-        return d.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'});
-    }
-    function formatRupiah(n) {
-        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
-    }
+    // ==================================================
+    // EVENT LISTENERS
+    // ==================================================
+    document.addEventListener('DOMContentLoaded', function () {
+      // Fetch event detail saat page load
+      if (eventId) {
+        fetchEventDetail();
+      }
+
+      // Tombol + untuk tambah quantity
+      document.getElementById('increase').addEventListener('click', function () {
+        if (quantity < availableTickets) {
+          quantity++;
+          updateBill();
+        }
+      });
+
+      // Tombol - untuk kurangi quantity
+      document.getElementById('decrease').addEventListener('click', function () {
+        if (quantity > 1) {
+          quantity--;
+          updateBill();
+        }
+      });
+
+      // Tombol Pesan
+      document.getElementById('pesanBtn').addEventListener('click', function () {
+        if (availableTickets <= 0) {
+          alert('Maaf, tiket sudah habis terjual.');
+          return;
+        }
+
+        if (confirm(`Konfirmasi pemesanan:\n\nEvent: ${eventData.title}\nJumlah: ${quantity} tiket\nTotal: IDR ${formatCurrency(basePrice * quantity)}\n\nLanjutkan?`)) {
+          createBooking();
+        }
+      });
+    });
   </script>
 
 </body>
+
 </html>

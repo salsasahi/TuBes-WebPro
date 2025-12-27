@@ -6,320 +6,157 @@
   <title>Dashboard - EventKu</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-  <style>
-    .loading {
-      text-align: center;
-      width: 100%;
-      padding: 40px;
-      font-size: 1.2rem;
-      color: #666;
-    }
-    .error-msg {
-      text-align: center;
-      width: 100%;
-      padding: 20px;
-      color: #dc3545;
-      background-color: #f8d7da;
-      border-radius: 8px;
-    }
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .user-greeting {
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #333;
-    }
-    .btn-logout {
-        background: none;
-        border: 1px solid #dc3545;
-        color: #dc3545;
-        padding: 5px 15px;
-        border-radius: 20px;
-        cursor: pointer;
-        font-size: 0.8rem;
-        transition: 0.3s;
-    }
-    .btn-logout:hover {
-        background: #dc3545;
-        color: white;
-    }
-  </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
+  <!-- NAVBAR -->
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
-      <h1 class="logo-text" style="color: #4A90E2; font-weight: bold;">EventKu</h1>
+      <img src="logoEvent.jpg" alt="EventKu Logo" class="logo-icon" />
+      <h1 class="logo-text">EventKu</h1>
     </div>
     <nav class="navbar-links">
-      <a href="dashboard_new.html" class="active">Beranda</a>
-      <a href="#events">Event</a>
-      <a href="#about">Tentang</a>
+      <a href="dashboard.html" class="active">Beranda</a>
+      <a href="events.html">Event</a>
+      <a href="about.html">Tentang</a>
+      <a href="contact.html">Kontak</a>
     </nav>
-    
-    <div class="navbar-right" id="userSection">
-        <div class="user-info">
-            <span id="userNameDisplay" class="user-greeting">Hi, User</span>
-            <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
+    <div class="navbar-right">
+      <a href="login.html" class="btn-login">Masuk</a>
+      <a href="signup.html" class="btn-register">Daftar</a>
     </div>
   </header>
 
+  <!-- HERO SECTION -->
   <section class="hero">
     <div class="hero-text">
       <h1>Temukan Event <span> Terbaik</span> di EventKu</h1>
-      <p>Platform terpercaya untuk menemukan dan mengikuti berbagai event menarik.</p>
+      <p>Platform terpercaya untuk menemukan dan mengikuti berbagai event menarik. Dari seminar bisnis hingga konser musik, semuanya ada di sini.</p>
       <div class="hero-buttons">
         <a href="#events" class="btn-primary">Lihat Event</a>
+        <a href="signup.html" class="btn-outline">Daftar Sekarang</a>
       </div>
     </div>
     <div class="hero-img">
-      <div style="width: 100%; height: 300px; background-color: #eee; display: flex; align-items: center; justify-content: center; border-radius: 10px;">
-          <i class="fas fa-image fa-3x" style="color: #ccc;"></i>
-      </div>
+      <img src="img.jpg" alt="Event Image" />
     </div>
   </section>
 
+  <!-- SEARCH SECTION -->
   <section class="search">
     <h2>Cari Event Favoritmu</h2>
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Cari nama event..." />
-      
-      <select id="categorySelect">
-        <option value="">Semua Kategori</option>
+      <input type="text" placeholder="Cari nama event..." />
+      <select>
+        <option>Semua Kategori</option>
+        <option>Teknologi</option>
+        <option>Musik</option>
+        <option>Bisnis</option>
       </select>
-      
-      <button id="searchBtn"><i class="fas fa-search"></i> Cari</button>
+      <button><i class="fas fa-search"></i> Cari</button>
     </div>
   </section>
 
+  <!-- FEATURED EVENTS -->
   <section id="events" class="featured">
-    <h2>Daftar Event</h2>
-    <p>Temukan event yang sesuai dengan minatmu!</p>
+    <h2>Event Unggulan</h2>
+    <p>Jangan lewatkan event-event terbaik bulan ini!</p>
 
-    <div class="event-list" id="eventListContainer">
-      <div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>
+    <div class="event-list">
+      <div class="event-card">
+        <img src="tech.jpg" alt="Tech Summit" />
+        <div class="event-content">
+          <div class="event-header">
+            <span class="event-category tech">Teknologi</span>
+            <span class="event-date">15 Des 2024</span>
+          </div>
+          <h3>Tech Summit Indonesia 2024</h3>
+          <p>Konferensi teknologi terbesar di Indonesia dengan pembicara internasional.</p>
+          <div class="event-footer">
+            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Jakarta Convention Center</span>
+            <a href="detail-event.html" class="btn-small">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="jakarta.jpg" alt="Music Festival" />
+        <div class="event-content">
+          <div class="event-header">
+            <span class="event-category music">Musik</span>
+            <span class="event-date">20 Des 2024</span>
+          </div>
+          <h3>Jakarta Music Festival</h3>
+          <p>Festival musik dengan lineup artis lokal dan internasional terbaik.</p>
+          <div class="event-footer">
+            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Gelora Bung Karno</span>
+            <a href="detail-event.html" class="btn-small">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card">
+        <img src="startup.jpg" alt="Startup Expo" />
+        <div class="event-content">
+          <div class="event-header">
+            <span class="event-category bisnis">Bisnis</span>
+            <span class="event-date">25 Des 2024</span>
+          </div>
+          <h3>Startup Expo 2024</h3>
+          <p>Pameran startup terbesar dengan investor dan mentor berpengalaman.</p>
+          <div class="event-footer">
+            <span class="event-location"><i class="fas fa-map-marker-alt"></i> Balai Kartini</span>
+            <a href="detail-event.html" class="btn-small">Lihat Detail</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lihat-semua-wrapper">
+      <button class="lihat-semua-btn">
+        <i class="fa fa-calendar"></i> Lihat Semua Event
+      </button>
     </div>
   </section>
 
-  <footer id="contact" class="main-footer">
-    <div class="footer-bottom">
-      <p class="copyright">© 2024 <strong>EventKu</strong>. Semua hak cipta dilindungi.</p>
+  <!-- STATISTICS -->
+  <section class="stats">
+    <div class="stat">
+      <h3>500+</h3>
+      <p>Event Tersedia</p>
+    </div>
+    <div class="stat">
+      <h3>50K+</h3>
+      <p>Peserta Bergabung</p>
+    </div>
+    <div class="stat">
+      <h3>1000+</h3>
+      <p>Penyelenggara</p>
+    </div>
+    <div class="stat">
+      <h3>4.8★</h3>
+      <p>Rating Pengguna</p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <h2>Siap Menemukan Event Impianmu?</h2>
+    <p>Bergabunglah sekarang dan temukan pengalaman tak terlupakan melalui berbagai event menarik di EventKu!</p>
+    <div class="cta-buttons">
+      <a href="signup.html" class="btn-primary">Daftar Sekarang</a>
+      <a href="#events" class="btn-outline">Jelajahi Event</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="logo">EventKu</div>
+      <p>Tempat terbaik untuk mencari event impianmu.</p>
+      <p class="copyright">© 2024 EventKu. Semua hak cipta dilindungi.</p>
     </div>
   </footer>
-
-  <script>
-    // --- KONFIGURASI API ---
-    const API_BASE_URL = 'http://127.0.0.1:8000';
-    
-    // --- CEK AUTENTIKASI ---
-    const token = localStorage.getItem('authToken');
-    const userDataStr = localStorage.getItem('userData');
-    
-    if (!token) {
-        alert("Sesi habis atau belum login. Silakan login kembali.");
-        window.location.href = "login.html";
-    }
-
-    if (userDataStr) {
-        try {
-            const user = JSON.parse(userDataStr);
-            const userNameDisplay = document.getElementById('userNameDisplay');
-            if(userNameDisplay) userNameDisplay.textContent = `Hi, ${user.username || 'User'}`;
-        } catch (e) {
-            console.error("Gagal parsing data user", e);
-        }
-    }
-
-    // --- ELEMEN DOM ---
-    const eventContainer = document.getElementById('eventListContainer');
-    const searchInput = document.getElementById('searchInput');
-    const categorySelect = document.getElementById('categorySelect');
-    const searchBtn = document.getElementById('searchBtn');
-    const logoutBtn = document.getElementById('logoutBtn');
-
-    // --- 1. FUNGSI LOAD KATEGORI (Dynamic Dropdown) ---
-    async function fetchCategories() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/categories`, {
-                headers: { 'Accept': 'application/json' }
-            });
-            const result = await response.json();
-            
-            if (result.success && result.data && result.data.categories) {
-                const categories = result.data.categories;
-                categories.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.id; // Value adalah ID (misal: 8, 3, 5)
-                    option.textContent = cat.name; // Teks adalah Nama (misal: Career Fair)
-                    categorySelect.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error("Gagal memuat kategori:", error);
-        }
-    }
-
-    // --- 2. FUNGSI FETCH EVENT (SEARCH & FILTER) ---
-    async function fetchEvents() {
-      // Ambil nilai dari input saat fungsi dipanggil
-      const keyword = searchInput.value;
-      const categoryId = categorySelect.value;
-
-      try {
-        eventContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>';
-        
-        // Setup URL Parameters sesuai request kamu
-        // http://127.0.0.1:8000/api/events?page=1&per_page=10&search=&status=&category_id=
-        const params = new URLSearchParams();
-        params.append('page', '1');          // Default page 1
-        params.append('per_page', '10');     // Limit 10
-        params.append('status', 'published'); // Default status published
-        
-        // Append search & category hanya jika ada isinya
-        if (keyword) params.append('search', keyword);
-        if (categoryId) params.append('category_id', categoryId);
-        
-        const fullUrl = `${API_BASE_URL}/api/events?${params.toString()}`;
-        console.log("Fetching URL:", fullUrl); // Debugging URL
-
-        const response = await fetch(fullUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Authorization': `Bearer ${token}` 
-            }
-        });
-
-        if (response.status === 401) {
-            handleLogout("Sesi Anda telah berakhir.");
-            return;
-        }
-
-        if (!response.ok) throw new Error('Gagal mengambil data event');
-
-        const result = await response.json();
-        console.log("Result API Events:", result);
-
-        // --- NORMALISASI DATA RESPONSE ---
-        let events = [];
-
-        // Struktur Laravel Paginate biasanya: { data: [...] } atau { data: { data: [...] } }
-        // Struktur API 'Newest' sebelumnya: { data: { events: [...] } }
-        
-        if (result.data && Array.isArray(result.data)) {
-            // Case 1: Standard Pagination (result.data adalah array eventnya)
-            events = result.data;
-        } else if (result.data && result.data.data && Array.isArray(result.data.data)) {
-            // Case 2: Nested Pagination (result.data.data adalah array eventnya)
-            events = result.data.data;
-        } else if (result.data && result.data.events && Array.isArray(result.data.events)) {
-             // Case 3: Custom structure seperti /newest
-            events = result.data.events;
-        } else if (Array.isArray(result)) {
-            events = result;
-        }
-
-        renderEvents(events);
-
-      } catch (error) {
-        console.error("Fetch Error:", error);
-        eventContainer.innerHTML = `<div class="error-msg">Gagal memuat event. ${error.message}</div>`;
-      }
-    }
-
-    // --- 3. FUNGSI RENDER HTML ---
-    function renderEvents(eventsData) {
-      eventContainer.innerHTML = '';
-
-      if (!Array.isArray(eventsData) || eventsData.length === 0) {
-        eventContainer.innerHTML = '<div class="loading">Tidak ada event ditemukan.</div>';
-        return;
-      }
-
-      eventsData.forEach(event => {
-        // Handle Image URL
-        let imageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
-        if (event.image_url) {
-            imageUrl = event.image_url.startsWith('http') 
-                ? event.image_url 
-                : `${API_BASE_URL}${event.image_url}`;
-        }
-        
-        // Handle Null Safety
-        const title = event.title || 'Tanpa Judul';
-        const category = event.category ? event.category.name : (event.category_name || 'Umum');
-        const dateDisplay = event.start_date ? formatDate(event.start_date) : 'Segera';
-        const desc = event.description ? event.description.substring(0, 80) + '...' : '';
-        const location = event.location || 'Online';
-        const eventId = event.id;
-
-        const cardHTML = `
-          <div class="event-card">
-            <img src="${imageUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/400x200?text=Error'">
-            <div class="event-content">
-              <div class="event-header">
-                <span class="event-category">${category}</span>
-                <span class="event-date">${dateDisplay}</span>
-              </div>
-              <h3>${title}</h3>
-              <p>${desc}</p>
-              <div class="event-footer">
-                <span class="event-location"><i class="fas fa-map-marker-alt"></i> ${location}</span>
-                <a href="detail-event.html?id=${eventId}" class="btn-small">Detail</a>
-              </div>
-            </div>
-          </div>
-        `;
-        eventContainer.insertAdjacentHTML('beforeend', cardHTML);
-      });
-    }
-
-    function formatDate(dateString) {
-      try {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString('id-ID', options);
-      } catch (e) { return dateString; }
-    }
-
-    // --- FUNGSI LOGOUT ---
-    async function handleLogout(message = "Logout berhasil!") {
-        localStorage.clear();
-        alert(message);
-        window.location.href = "login.html";
-    }
-
-    // --- EVENT LISTENERS ---
-    
-    // 1. Klik Tombol Cari
-    searchBtn.addEventListener('click', () => {
-        fetchEvents(); // Ambil value terbaru dari input di dalam fungsi
-    });
-
-    // 2. Tekan Enter di Search Bar
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            fetchEvents();
-        }
-    });
-
-    // 3. Ganti Dropdown Kategori (Opsional: langsung search saat ganti)
-    categorySelect.addEventListener('change', () => {
-        fetchEvents();
-    });
-    
-    logoutBtn.addEventListener('click', (e) => {
-        if(confirm("Yakin ingin keluar?")) handleLogout();
-    });
-
-    // --- INIT ---
-    document.addEventListener('DOMContentLoaded', () => {
-        fetchCategories(); // Muat opsi kategori dulu
-        fetchEvents();     // Muat semua event (page 1)
-    });
-  </script>
 </body>
 </html>

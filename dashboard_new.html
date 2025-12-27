@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,33 +9,98 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <style>
-    /* Tambahan style untuk loading dan error state */
-    .loading { text-align: center; padding: 40px; font-size: 1.2rem; color: #666; width: 100%; }
-    .error-msg { text-align: center; width: 100%; padding: 20px; color: #dc3545; background: #f8d7da; border-radius: 8px; }
-    .user-menu { display: flex; align-items: center; gap: 15px; }
-    .btn-logout { background: none; border: 1px solid #dc3545; color: #dc3545; padding: 5px 15px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
-    .btn-logout:hover { background: #dc3545; color: white; }
+    .loading {
+      text-align: center;
+      width: 100%;
+      padding: 40px;
+      font-size: 1.2rem;
+      color: #666;
+    }
+
+    .error-msg {
+      text-align: center;
+      width: 100%;
+      padding: 20px;
+      color: #dc3545;
+      background-color: #f8d7da;
+      border-radius: 8px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-greeting {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid #dc3545;
+      color: #dc3545;
+      padding: 5px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: 0.3s;
+    }
+
+    .btn-logout:hover {
+      background: #dc3545;
+      color: white;
+    }
+
+    .user-avatar-link {
+      text-decoration: none;
+    }
+
+    .user-avatar-icon {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #9ca3af, #6b7280);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-avatar-icon:hover {
+      background: linear-gradient(135deg, #4A90E2, #357ABD);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
   </style>
 </head>
+
 <body>
   <header class="navbar">
     <div class="navbar-left">
-      <img src="logoEvent.jpg" alt="EventKu" class="logo-icon" onerror="this.style.display='none'"/> 
-      <h1 class="logo-text">EventKu</h1>
+      <h1 class="logo-text" style="color: #4A90E2; font-weight: bold;">EventKu</h1>
     </div>
     <nav class="navbar-links">
       <a href="dashboard_new.html" class="active">Beranda</a>
       <a href="#events">Event</a>
       <a href="#about">Tentang</a>
-      <a href="#contact">Kontak</a>
     </nav>
-    <div class="navbar-right">
-      <div class="user-menu">
-        <span id="userNameDisplay" style="font-weight: 600; color: #333;">Hi, User</span>
-        <a href="profilnew.html" class="user-avatar">
-          <img id="userAvatarImg" src="https://ui-avatars.com/api/?name=User&background=random" alt="User" />
+
+    <div class="navbar-right" id="userSection">
+      <div class="user-info">
+        <span id="userNameDisplay" class="user-greeting">Hi, User</span>
+        <a href="profilnew.html" class="user-avatar-link" title="Lihat Profil">
+          <div class="user-avatar-icon">
+            <i class="fas fa-user"></i>
+          </div>
         </a>
-        <button onclick="handleLogout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i></button>
+        <button id="logoutBtn" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </div>
   </header>
@@ -42,13 +108,10 @@
   <section class="hero">
     <div class="hero-text">
       <h1>Temukan Event <span> Terbaik</span> di EventKu</h1>
-      <p>Platform terpercaya untuk menemukan dan mengikuti berbagai event menarik. Dari seminar bisnis hingga konser musik, semuanya ada di sini.</p>
+      <p>Platform terpercaya untuk menemukan dan mengikuti berbagai event menarik.</p>
       <div class="hero-buttons">
         <a href="#events" class="btn-primary">Lihat Event</a>
       </div>
-    </div>
-    <div class="hero-img">
-      <img src="img.jpg" alt="Event Image" onerror="this.src='https://via.placeholder.com/600x400?text=EventKu+Hero'"/>
     </div>
   </section>
 
@@ -56,34 +119,35 @@
     <h2>Cari Event Favoritmu</h2>
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Cari nama event..." />
-      
+
       <select id="categorySelect">
         <option value="">Semua Kategori</option>
-        </select>
-      
+      </select>
+
       <button id="searchBtn"><i class="fas fa-search"></i> Cari</button>
     </div>
   </section>
 
   <section id="events" class="featured">
-    <h2>Event Terbaru</h2>
-    <p>Jangan lewatkan event-event terbaik bulan ini!</p>
+    <h2>Daftar Event</h2>
+    <p>Temukan event yang sesuai dengan minatmu!</p>
 
     <div class="event-list" id="eventListContainer">
       <div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>
     </div>
   </section>
 
+  <!-- TENTANG KAMI -->
   <section id="about" class="about-section-centered">
     <div class="about-content">
       <span class="sub-title">Tentang Kami</span>
       <h2>Platform Event <span>Terlengkap</span></h2>
       <p>
-        EventKu hadir sebagai solusi digital terdepan untuk menghubungkan penyelenggara acara dengan audiens yang tepat. 
-        Kami berkomitmen memberikan pengalaman mencari, mengikuti, dan mengelola berbagai jenis event secara mudah, 
+        EventKu hadir sebagai solusi digital terdepan untuk menghubungkan penyelenggara acara dengan audiens yang tepat.
+        Kami berkomitmen memberikan pengalaman mencari, mengikuti, dan mengelola berbagai jenis event secara mudah,
         aman, dan menyenangkan bagi semua orang di seluruh Indonesia.
       </p>
-      
+
       <div class="about-stats-mini">
         <div class="stat-item">
           <strong>100%</strong>
@@ -133,192 +197,236 @@
         </p>
       </div>
     </div>
-    
+
     <div class="footer-bottom">
-      <p class="copyright">© 2024 <strong>EventKu</strong>. Semua hak cipta dilindungi.</p>
+      <p class="copyright">© 2024 **EventKu**. Semua hak cipta dilindungi.</p>
     </div>
   </footer>
 
   <script>
     // --- KONFIGURASI API ---
-    const API_BASE_URL = 'http://127.0.0.1:8000'; // Sesuaikan port backend Anda
-    
-    // --- CEK LOGIN & USER DATA ---
+    const API_BASE_URL = 'http://127.0.0.1:8000';
+
+    // --- CEK AUTENTIKASI ---
     const token = localStorage.getItem('authToken');
     const userDataStr = localStorage.getItem('userData');
 
     if (!token) {
-        alert("Anda belum login! Mengarahkan ke halaman login...");
-        window.location.href = "login.html";
+      alert("Sesi habis atau belum login. Silakan login kembali.");
+      window.location.href = "login.html";
     }
 
     if (userDataStr) {
-        try {
-            const user = JSON.parse(userDataStr);
-            document.getElementById('userNameDisplay').textContent = `Hi, ${user.username || user.name || 'User'}`;
-            // Update avatar jika ada (gunakan UI Avatars sebagai fallback)
-            const avatarUrl = `https://ui-avatars.com/api/?name=${user.username}&background=random`;
-            document.getElementById('userAvatarImg').src = avatarUrl;
-        } catch (e) { console.error("Error parsing user data", e); }
+      try {
+        const user = JSON.parse(userDataStr);
+        const userNameDisplay = document.getElementById('userNameDisplay');
+        if (userNameDisplay) userNameDisplay.textContent = `Hi, ${user.username || 'User'}`;
+      } catch (e) {
+        console.error("Gagal parsing data user", e);
+      }
     }
 
-    // --- DOM ELEMENTS ---
+    // --- ELEMEN DOM ---
     const eventContainer = document.getElementById('eventListContainer');
     const searchInput = document.getElementById('searchInput');
     const categorySelect = document.getElementById('categorySelect');
     const searchBtn = document.getElementById('searchBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
 
-    // --- 1. FETCH CATEGORIES (Untuk Dropdown) ---
+    // --- 1. FUNGSI LOAD KATEGORI (Dynamic Dropdown) ---
     async function fetchCategories() {
-        try {
-            const response = await fetch(`${API_BASE_URL}/api/categories`, {
-                headers: { 'Accept': 'application/json' }
-            });
-            const result = await response.json();
-            
-            if (response.ok && result.data && result.data.categories) {
-                const categories = result.data.categories;
-                categories.forEach(cat => {
-                    const option = document.createElement('option');
-                    option.value = cat.id;
-                    option.textContent = cat.name;
-                    categorySelect.appendChild(option);
-                });
-            }
-        } catch (error) {
-            console.error("Gagal memuat kategori:", error);
+      try {
+        const response = await fetch(`${API_BASE_URL}/api/categories`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.categories) {
+          const categories = result.data.categories;
+          categories.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id; // Value adalah ID (misal: 8, 3, 5)
+            option.textContent = cat.name; // Teks adalah Nama (misal: Career Fair)
+            categorySelect.appendChild(option);
+          });
         }
+      } catch (error) {
+        console.error("Gagal memuat kategori:", error);
+      }
     }
 
-    // --- 2. FETCH EVENTS (Data Utama) ---
+    // --- 2. FUNGSI FETCH EVENT (SEARCH & FILTER) ---
     async function fetchEvents() {
-        const keyword = searchInput.value;
-        const categoryId = categorySelect.value;
+      // Ambil nilai dari input saat fungsi dipanggil
+      const keyword = searchInput.value;
+      const categoryId = categorySelect.value;
 
+      try {
         eventContainer.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Memuat event...</div>';
 
-        try {
-            // Setup URL Parameter
-            const params = new URLSearchParams();
-            params.append('status', 'published'); // Hanya tampilkan yang published
-            if (keyword) params.append('search', keyword);
-            if (categoryId) params.append('category_id', categoryId);
+        // Setup URL Parameters sesuai request kamu
+        // http://127.0.0.1:8000/api/events?page=1&per_page=10&search=&status=&category_id=
+        const params = new URLSearchParams();
+        params.append('page', '1');          // Default page 1
+        params.append('per_page', '10');     // Limit 10
+        params.append('status', 'published'); // Default status published
 
-            const response = await fetch(`${API_BASE_URL}/api/events?${params.toString()}`, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+        // Append search & category hanya jika ada isinya
+        if (keyword) params.append('search', keyword);
+        if (categoryId) params.append('category_id', categoryId);
 
-            if (response.status === 401) {
-                handleLogout("Sesi berakhir. Silakan login kembali.");
-                return;
-            }
+        const fullUrl = `${API_BASE_URL}/api/events?${params.toString()}`;
+        console.log("Fetching URL:", fullUrl); // Debugging URL
 
-            const result = await response.json();
-            
-            // Handle struktur data (kadang dibungkus 'data', kadang pagination 'data.data')
-            let events = [];
-            if (result.data && Array.isArray(result.data.data)) {
-                events = result.data.data;
-            } else if (result.data && Array.isArray(result.data)) {
-                events = result.data;
-            } else if (Array.isArray(result)) {
-                events = result;
-            }
-
-            renderEvents(events);
-
-        } catch (error) {
-            console.error("Fetch Error:", error);
-            eventContainer.innerHTML = `<div class="error-msg">Gagal memuat event. Pastikan server backend menyala.</div>`;
-        }
-    }
-
-    // --- 3. RENDER EVENTS KE HTML ---
-    function renderEvents(events) {
-        eventContainer.innerHTML = '';
-
-        if (!events || events.length === 0) {
-            eventContainer.innerHTML = '<div class="loading">Tidak ada event ditemukan.</div>';
-            return;
-        }
-
-        events.forEach(event => {
-            // Handle Gambar (Cek apakah URL full atau path local storage)
-            let imageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
-            if (event.image_url) {
-                imageUrl = event.image_url.startsWith('http') 
-                    ? event.image_url 
-                    : `${API_BASE_URL}${event.image_url}`;
-            }
-
-            // Format Tanggal
-            const dateStr = new Date(event.start_date).toLocaleDateString('id-ID', {
-                day: 'numeric', month: 'short', year: 'numeric'
-            });
-
-            // HTML Card Event
-            const cardHTML = `
-              <div class="event-card">
-                <img src="${imageUrl}" alt="${event.title}" onerror="this.src='https://via.placeholder.com/400x200?text=Error+Loading+Image'">
-                <div class="event-content">
-                  <div class="event-header">
-                    <span class="event-category" style="background: #e0f0ff; color: #007bff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;">
-                        ${event.category ? event.category.name : 'Umum'}
-                    </span>
-                    <span class="event-date">${dateStr}</span>
-                  </div>
-                  <h3>${event.title}</h3>
-                  <p>${event.description ? event.description.substring(0, 80) + '...' : '...'}</p>
-                  <div class="event-footer">
-                    <span class="event-location"><i class="fas fa-map-marker-alt"></i> ${event.location || 'Online'}</span>
-                    <a href="detail-event.html?id=${event.id}" class="btn-small">Detail</a>
-                  </div>
-                </div>
-              </div>
-            `;
-            eventContainer.insertAdjacentHTML('beforeend', cardHTML);
+        const response = await fetch(fullUrl, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
         });
+
+        if (response.status === 401) {
+          handleLogout("Sesi Anda telah berakhir.");
+          return;
+        }
+
+        if (!response.ok) throw new Error('Gagal mengambil data event');
+
+        const result = await response.json();
+        console.log("Result API Events:", result);
+
+        // --- NORMALISASI DATA RESPONSE ---
+        let events = [];
+
+        // Struktur Laravel Paginate biasanya: { data: [...] } atau { data: { data: [...] } }
+        // Struktur API 'Newest' sebelumnya: { data: { events: [...] } }
+
+        if (result.data && Array.isArray(result.data)) {
+          // Case 1: Standard Pagination (result.data adalah array eventnya)
+          events = result.data;
+        } else if (result.data && result.data.data && Array.isArray(result.data.data)) {
+          // Case 2: Nested Pagination (result.data.data adalah array eventnya)
+          events = result.data.data;
+        } else if (result.data && result.data.events && Array.isArray(result.data.events)) {
+          // Case 3: Custom structure seperti /newest
+          events = result.data.events;
+        } else if (Array.isArray(result)) {
+          events = result;
+        }
+
+        renderEvents(events);
+
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        eventContainer.innerHTML = `<div class="error-msg">Gagal memuat event. ${error.message}</div>`;
+      }
     }
 
-    // --- 4. LOGOUT ---
-    async function handleLogout(msg = "Logout Berhasil") {
-        if (!confirm("Yakin ingin keluar?")) return;
+    // --- 3. FUNGSI RENDER HTML ---
+    function renderEvents(eventsData) {
+      eventContainer.innerHTML = '';
 
-        try {
-            await fetch(`${API_BASE_URL}/api/logout`, {
-                method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`,
-                    'Accept': 'application/json'
-                }
-            });
-        } catch (e) { console.log("Logout error ignored", e); }
+      if (!Array.isArray(eventsData) || eventsData.length === 0) {
+        eventContainer.innerHTML = '<div class="loading">Tidak ada event ditemukan.</div>';
+        return;
+      }
 
+      eventsData.forEach(event => {
+        // Handle Image URL
+        let imageUrl = 'https://via.placeholder.com/400x200?text=No+Image';
+        if (event.image_url) {
+          imageUrl = event.image_url.startsWith('http')
+            ? event.image_url
+            : `${API_BASE_URL}${event.image_url}`;
+        }
+
+        // Handle Null Safety
+        const title = event.title || 'Tanpa Judul';
+        const category = event.category ? event.category.name : (event.category_name || 'Umum');
+        const dateDisplay = event.start_date ? formatDate(event.start_date) : 'Segera';
+        const desc = event.description ? event.description.substring(0, 80) + '...' : '';
+        const location = event.location || 'Online';
+        const eventId = event.id;
+
+        const cardHTML = `
+          <div class="event-card">
+            <img src="${imageUrl}" alt="${title}" onerror="this.src='https://via.placeholder.com/400x200?text=Error'">
+            <div class="event-content">
+              <div class="event-header">
+                <span class="event-category">${category}</span>
+                <span class="event-date">${dateDisplay}</span>
+              </div>
+              <h3>${title}</h3>
+              <p>${desc}</p>
+              <div class="event-footer">
+                <span class="event-location"><i class="fas fa-map-marker-alt"></i> ${location}</span>
+                <a href="detail-event.html?id=${eventId}" class="btn-small">Detail</a>
+              </div>
+            </div>
+          </div>
+        `;
+        eventContainer.insertAdjacentHTML('beforeend', cardHTML);
+      });
+    }
+
+    function formatDate(dateString) {
+      try {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString('id-ID', options);
+      } catch (e) { return dateString; }
+    }
+
+    // --- FUNGSI LOGOUT ---
+    async function handleLogout(message = "Logout berhasil!") {
+      try {
+        // Panggil API logout
+        await fetch(`${API_BASE_URL}/api/logout`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      } catch (error) {
+        console.error("Logout API error:", error);
+      } finally {
+        // Selalu clear localStorage dan redirect meskipun API gagal
         localStorage.clear();
-        alert(msg);
+        alert(message);
         window.location.href = "login.html";
+      }
     }
 
     // --- EVENT LISTENERS ---
-    searchBtn.addEventListener('click', fetchEvents);
-    
-    // Cari saat tekan Enter
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') fetchEvents();
+
+    // 1. Klik Tombol Cari
+    searchBtn.addEventListener('click', () => {
+      fetchEvents(); // Ambil value terbaru dari input di dalam fungsi
     });
 
-    // Cari otomatis saat ganti kategori
-    categorySelect.addEventListener('change', fetchEvents);
+    // 2. Tekan Enter di Search Bar
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        fetchEvents();
+      }
+    });
 
-    // --- JALANKAN SAAT LOAD ---
+    // 3. Ganti Dropdown Kategori (Opsional: langsung search saat ganti)
+    categorySelect.addEventListener('change', () => {
+      fetchEvents();
+    });
+
+    logoutBtn.addEventListener('click', (e) => {
+      if (confirm("Yakin ingin keluar?")) handleLogout();
+    });
+
+    // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-        fetchCategories(); // Isi dropdown dulu
-        fetchEvents();     // Load event list
+      fetchCategories(); // Muat opsi kategori dulu
+      fetchEvents();     // Muat semua event (page 1)
     });
   </script>
 </body>
+
 </html>
